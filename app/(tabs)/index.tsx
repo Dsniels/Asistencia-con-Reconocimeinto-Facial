@@ -1,31 +1,112 @@
-import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
+import {
+	Button,
+	StyleSheet,
+	TouchableOpacity,
+} from "react-native";
+import { Text, View } from "@/components/Themed";
+import {
+	Camera,
+	CameraView,
+	useCameraPermissions,
+} from "expo-camera";
+import { snap } from "@/Service/PrepareData";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useRef, useState } from "react";
 
 export default function TabOneScreen() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-    </View>
-  );
+	const [permission, requestPermission] = useCameraPermissions();
+	const cameraRef = useRef<CameraView | null>(null);
+	const [isCameraVisible, setIsCameraVisible] = useState(false);
+
+	useFocusEffect(
+		useCallback(() => {
+			if (!permission) {
+				requestPermission();
+			} else if (permission.granted) {
+				setIsCameraVisible(true);
+			}
+
+			return () => {
+				setIsCameraVisible(false);
+			};
+		}, [permission])
+	);
+
+	if (!permission) {
+		return <View />;
+	}
+
+	if (!permission.granted) {
+		return (
+			<View style={styles.container}>
+				<Text style={styles.permissionText}>
+					We need your permission to show the camera
+				</Text>
+				<Button onPress={requestPermission} title="Grant Permission" />
+			</View>
+		);
+	}
+
+	return (
+		<View style={styles.container}>
+			{isCameraVisible && (
+				<CameraView
+					ref={cameraRef}
+					facing="back"
+					style={styles.camera}
+				>
+					<View style={styles.buttonContainer}>
+						{/* <TouchableOpacity
+							style={styles.button}
+							onPress={() => snap(false, cameraRef.current as CameraView)}
+						>
+							<Text style={styles.buttonText}>Registrar</Text>
+						</TouchableOpacity> */}
+						<TouchableOpacity
+							style={styles.button}
+							onPress={() => snap(true, cameraRef.current as CameraView)}
+						>
+							<Text style={styles.buttonText}>Reconocer</Text>
+						</TouchableOpacity>
+					</View>
+				</CameraView>
+			)}
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
+	container: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	camera: {
+		flex: 1,
+		width: "100%",
+		justifyContent: "flex-end",
+	},
+	buttonContainer: {
+		flexDirection: "row",
+		justifyContent: "space-around",
+		marginBottom: 20,
+	},
+	button: {
+		flex: 1,
+		alignItems: "center",
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
+		padding: 10,
+		marginHorizontal: 10,
+		borderRadius: 5,
+	},
+	buttonText: {
+		fontSize: 18,
+		color: "white",
+	},
+	permissionText: {
+		fontSize: 16,
+		textAlign: "center",
+		marginBottom: 20,
+	},
 });
+
