@@ -1,12 +1,9 @@
 import { AxiosResponse } from "axios";
 import HttpClient from "../HttpClient";
-import { IActions, Registro } from "@/Types/Registro";
+import { IActions,  } from "@/Types/Registro";
 
 class Actions implements IActions {
-	registro({ userId, imagen }: Registro): Promise<Object> {
-    const body = imagen
-    body.append("nombre", userId); 
-
+	registro(body : FormData): Promise<Object> {
 		return new Promise((resolve, reject) => {
 			HttpClient.post("register", body)
 				.then((response: AxiosResponse) => {
@@ -42,4 +39,4 @@ class Actions implements IActions {
 	}
 }
 
-export const Kairos = new Actions();
+export const Api = new Actions();
