@@ -56,12 +56,6 @@ export default function TabOneScreen() {
 					style={styles.camera}
 				>
 					<View style={styles.buttonContainer}>
-						{/* <TouchableOpacity
-							style={styles.button}
-							onPress={() => snap(false, cameraRef.current as CameraView)}
-						>
-							<Text style={styles.buttonText}>Registrar</Text>
-						</TouchableOpacity> */}
 						<TouchableOpacity
 							style={styles.button}
 							onPress={() => snap( cameraRef.current as CameraView)}
