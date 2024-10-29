@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Text, View } from "@/components/Themed";
-import { Alumno } from "@/Types/Registro";
+import {   Modal, StyleSheet, TextInput, Button, Image } from "react-native";
 import { Camera, CameraView } from "expo-camera";
-import {
-  Button,
-  Image,
-  StyleSheet,
-  TextInput,
-} from "react-native";
+import { Alumno } from "@/Types/Registro";
+import { prepareRegister } from "@/Service/PhotosActions";
+import { Text, View } from "@/components/Themed";
 
 export default function RegistroAlumno() {
   const [alumno, setAlumno] = useState<Alumno>({
     nombre: "",
-    matricula: "",
+    matricula: 0,
     primerApellido: "",
     segundoApellido: "",
     imagen: null,
@@ -51,50 +47,68 @@ export default function RegistroAlumno() {
     }
   };
 
+  const submit = () => {
+    prepareRegister(alumno);
+    setAlumno({
+      nombre: '',
+      primerApellido: '',
+      segundoApellido: '',
+      matricula: 0,
+      imagen: null
+    });
+  };
+
   return (
     <View style={styles.container}>
       <Text>Registro de alumnos</Text>
       <View>
         <Text>Nombre</Text>
         <TextInput
+          style={{ color: 'white' }}
           value={alumno.nombre}
           onChangeText={(text) => setAlumno((prev) => ({ ...prev, nombre: text }))}
         />
         <Text>Apellido Paterno</Text>
         <TextInput
+          style={{ color: 'white' }}
           value={alumno.primerApellido}
           onChangeText={(text) => setAlumno((prev) => ({ ...prev, primerApellido: text }))}
         />
         <Text>Apellido Materno</Text>
         <TextInput
+          style={{ color: 'white' }}
           value={alumno.segundoApellido}
           onChangeText={(text) => setAlumno((prev) => ({ ...prev, segundoApellido: text }))}
         />
         <Text>Matricula</Text>
         <TextInput
-          value={alumno.matricula}
-          onChangeText={(text) => setAlumno((prev) => ({ ...prev, matricula: text }))}
+          inputMode="numeric"
+          style={{ color: 'white' }}
+          value={alumno.matricula.toString()}
+          onChangeText={(text) => setAlumno((prev) => ({ ...prev, matricula: Number(text) }))}
         />
         <Button title="Tomar Foto" onPress={openCamera} />
         {alumno.imagen && (
-			<View>
-				<Button title="Eliminar foto" onPress={()=>setAlumno((prev)=>({...prev, imagen : null}))}/>
-				<Image source={{ uri: alumno.imagen.uri }} style={styles.image} />
-			</View>
+          <View>
+            <Button title="Eliminar foto" onPress={() => setAlumno((prev) => ({ ...prev, imagen: null }))} />
+            <Image source={{ uri: alumno.imagen.uri }} style={styles.image} />
+          </View>
         )}
       </View>
-      {isCameraOpen && hasPermission && (
+
+      <Modal visible={isCameraOpen} animationType="slide" transparent={false}>
         <CameraView
           style={styles.camera}
           ref={(ref) => setCameraRef(ref)}
-          onCameraReady={() => console.log("Camera is ready")}
-        >
+          >
           <View style={styles.cameraButtonContainer}>
             <Button title="Tomar" onPress={takePicture} />
             <Button title="Cerrar" onPress={() => setIsCameraOpen(false)} />
           </View>
         </CameraView>
-      )}
+      </Modal>
+
+      <Button disabled={!alumno.imagen} title="Registrar" onPress={submit} />
     </View>
   );
 }
