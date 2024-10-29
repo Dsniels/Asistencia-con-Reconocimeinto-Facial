@@ -9,9 +9,9 @@ import {
 	CameraView,
 	useCameraPermissions,
 } from "expo-camera";
-import { snap } from "@/Service/PrepareData";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useRef, useState } from "react";
+import { snap } from "@/Service/PhotosActions";
 
 export default function TabOneScreen() {
 	const [permission, requestPermission] = useCameraPermissions();
@@ -64,7 +64,7 @@ export default function TabOneScreen() {
 						</TouchableOpacity> */}
 						<TouchableOpacity
 							style={styles.button}
-							onPress={() => snap(true, cameraRef.current as CameraView)}
+							onPress={() => snap( cameraRef.current as CameraView)}
 						>
 							<Text style={styles.buttonText}>Reconocer</Text>
 						</TouchableOpacity>
