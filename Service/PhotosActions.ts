@@ -2,19 +2,30 @@ import { CameraView } from "expo-camera";
 import { Api } from "./Api/Actions";
 import { CameraCapturedPicture } from "expo-camera/build/legacy/Camera.types";
 import { Alumno } from "@/Types/Registro";
+import { Camera } from "expo-camera/legacy";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 
-export const snap = async (camera: CameraView) => {
+export const snap = async (camera: CameraView | Camera) => {
 	try {
 		if (camera) {
-			let photo = await camera.takePictureAsync({ base64: true });
+			let photo = await camera.takePictureAsync({ base64: true ,});
 			if (photo) {
-				const data = prepareData(photo);
-				 Api.reconocimiento(data)
+				// photo  = await rotateImage(photo);
+				const data = prepareData(photo as CameraCapturedPicture);
+				Api.reconocimiento(data);
 			}
 		}
 	} catch (e) {
 		console.log("error on snap: ", e);
 	}
+};
+
+const rotateImage = async (image: CameraCapturedPicture) => {
+	return await manipulateAsync(
+		image.uri,
+		[{ rotate: 90 }],
+		{ compress: 1, format: SaveFormat.JPEG, base64: true }
+	);
 };
 
 const prepareData = (imagen: CameraCapturedPicture): FormData => {

@@ -1,136 +1,200 @@
 import React, { useEffect, useState } from "react";
-import {   Modal, StyleSheet, TextInput, Button, Image } from "react-native";
-import { Camera, CameraView } from "expo-camera";
+import {
+	Modal,
+	StyleSheet,
+	TextInput,
+	Button,
+	Image,
+	View,
+} from "react-native";
+import { Camera, CameraCapturedPicture, CameraView } from "expo-camera";
 import { Alumno } from "@/Types/Registro";
 import { prepareRegister } from "@/Service/PhotosActions";
-import { Text, View } from "@/components/Themed";
-
+import { Text } from "@/components/Themed";
+import { Ionicons } from "@expo/vector-icons";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import * as ScreenOrientation from "expo-screen-orientation";
 export default function RegistroAlumno() {
-  const [alumno, setAlumno] = useState<Alumno>({
-    nombre: "",
-    matricula: 0,
-    primerApellido: "",
-    segundoApellido: "",
-    imagen: null,
-  });
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [cameraRef, setCameraRef] = useState<CameraView | null>(null);
-  const [isCameraOpen, setIsCameraOpen] = useState<boolean>(false);
+	const [alumno, setAlumno] = useState<Alumno>({
+		nombre: "",
+		matricula: 0,
+		primerApellido: "",
+		segundoApellido: "",
+		imagen: null,
+	});
+	const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+	const [cameraRef, setCameraRef] = useState<CameraView | null>(null);
+	const [isCameraOpen, setIsCameraOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    const requestCameraPermissions = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    };
+	useEffect(() => {
+		const requestCameraPermissions = async () => {
+			const { status } = await Camera.requestCameraPermissionsAsync();
+			setHasPermission(status === "granted");
+		};
 
-    requestCameraPermissions();
-  }, []);
+		requestCameraPermissions();
+	}, []);
 
-  const openCamera = () => {
-    if (hasPermission) {
-      setIsCameraOpen(true);
-    } else {
-      alert("Se necesita permiso para acceder a la cámara.");
-    }
-  };
+	const openCamera = () => {
+		if (hasPermission) {
+			setIsCameraOpen(true);
+		} else {
+			alert("Se necesita permiso para acceder a la cámara.");
+		}
+	};
 
-  const takePicture = async () => {
-    if (cameraRef) {
-      const photo = await cameraRef.takePictureAsync();
-      if (photo) {
-        setAlumno((prev) => ({
-          ...prev,
-          imagen: photo,
-        }));
-        setIsCameraOpen(false);
-      }
-    }
-  };
+	const rotateImage = async (
+		image: CameraCapturedPicture
+	): Promise<CameraCapturedPicture> => {
+		await Image.getSize(image.uri, async (w, h) => {
+			if (w > h) {
+				return await manipulateAsync(image.uri, [{ rotate: 90 }], {
+					compress: 1,
+					format: SaveFormat.JPEG,
+					base64: true,
+				});
+			}
+		});
 
-  const submit = () => {
-    prepareRegister(alumno);
-    setAlumno({
-      nombre: '',
-      primerApellido: '',
-      segundoApellido: '',
-      matricula: 0,
-      imagen: null
-    });
-  };
+		return image;
+	};
 
-  return (
-    <View style={styles.container}>
-      <Text>Registro de alumnos</Text>
-      <View>
-        <Text>Nombre</Text>
-        <TextInput
-          style={{ color: 'white' }}
-          value={alumno.nombre}
-          onChangeText={(text) => setAlumno((prev) => ({ ...prev, nombre: text }))}
-        />
-        <Text>Apellido Paterno</Text>
-        <TextInput
-          style={{ color: 'white' }}
-          value={alumno.primerApellido}
-          onChangeText={(text) => setAlumno((prev) => ({ ...prev, primerApellido: text }))}
-        />
-        <Text>Apellido Materno</Text>
-        <TextInput
-          style={{ color: 'white' }}
-          value={alumno.segundoApellido}
-          onChangeText={(text) => setAlumno((prev) => ({ ...prev, segundoApellido: text }))}
-        />
-        <Text>Matricula</Text>
-        <TextInput
-          inputMode="numeric"
-          style={{ color: 'white' }}
-          value={alumno.matricula.toString()}
-          onChangeText={(text) => setAlumno((prev) => ({ ...prev, matricula: Number(text) }))}
-        />
-        <Button title="Tomar Foto" onPress={openCamera} />
-        {alumno.imagen && (
-          <View>
-            <Button title="Eliminar foto" onPress={() => setAlumno((prev) => ({ ...prev, imagen: null }))} />
-            <Image source={{ uri: alumno.imagen.uri }} style={styles.image} />
-          </View>
-        )}
-      </View>
+	const takePicture = async () => {
+		if (cameraRef) {
+			let photo = (await cameraRef.takePictureAsync({
+				exif: true,
+			})) as CameraCapturedPicture;
+			if (photo) {
 
-      <Modal visible={isCameraOpen} animationType="slide" transparent={false}>
-        <CameraView
-          style={styles.camera}
-          ref={(ref) => setCameraRef(ref)}
-          >
-          <View style={styles.cameraButtonContainer}>
-            <Button title="Tomar" onPress={takePicture} />
-            <Button title="Cerrar" onPress={() => setIsCameraOpen(false)} />
-          </View>
-        </CameraView>
-      </Modal>
+				photo = await rotateImage(photo);
+				setAlumno((prev) => ({
+					...prev,
+					imagen: photo,
+				}));
+				setIsCameraOpen(false);
+			}
+		}
+	};
 
-      <Button disabled={!alumno.imagen} title="Registrar" onPress={submit} />
-    </View>
-  );
+	const submit = () => {
+		prepareRegister(alumno);
+		setAlumno({
+			nombre: "",
+			primerApellido: "",
+			segundoApellido: "",
+			matricula: 0,
+			imagen: null,
+		});
+	};
+
+	return (
+		<View style={styles.container}>
+			<Text>Registro de alumnos</Text>
+			<View>
+				<Text>Nombre</Text>
+				<TextInput
+					style={{ color: "white" }}
+					value={alumno.nombre}
+					onChangeText={(text) =>
+						setAlumno((prev) => ({ ...prev, nombre: text }))
+					}
+				/>
+				<Text>Apellido Paterno</Text>
+				<TextInput
+					style={{ color: "white" }}
+					value={alumno.primerApellido}
+					onChangeText={(text) =>
+						setAlumno((prev) => ({ ...prev, primerApellido: text }))
+					}
+				/>
+				<Text>Apellido Materno</Text>
+				<TextInput
+					style={{ color: "white" }}
+					value={alumno.segundoApellido}
+					onChangeText={(text) =>
+						setAlumno((prev) => ({
+							...prev,
+							segundoApellido: text,
+						}))
+					}
+				/>
+				<Text>Matricula</Text>
+				<TextInput
+					inputMode="numeric"
+					style={{ color: "white" }}
+					value={alumno.matricula.toString()}
+					onChangeText={(text) =>
+						setAlumno((prev) => ({
+							...prev,
+							matricula: Number(text),
+						}))
+					}
+				/>
+				<Button title="Tomar Foto" onPress={openCamera} />
+				{alumno.imagen && (
+					<View>
+						<Button
+							title="Eliminar foto"
+							onPress={() =>
+								setAlumno((prev) => ({ ...prev, imagen: null }))
+							}
+						/>
+						<Ionicons name="remove" size={10} />
+						<Image
+							source={{ uri: alumno.imagen.uri }}
+							style={styles.image}
+						/>
+					</View>
+				)}
+			</View>
+
+			<Modal
+				visible={isCameraOpen}
+				animationType="slide"
+				transparent={false}
+			>
+				<CameraView
+					mute={true}
+					style={styles.camera}
+					ref={(ref) => setCameraRef(ref)}
+				>
+					<View style={styles.cameraButtonContainer}>
+						<Button title="Tomar" onPress={takePicture} />
+						<Button
+							title="Cerrar"
+							onPress={() => setIsCameraOpen(false)}
+						/>
+					</View>
+				</CameraView>
+			</Modal>
+
+			<Button
+				disabled={!alumno.imagen}
+				title="Registrar"
+				onPress={submit}
+			/>
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  camera: {
-    flex: 1,
-    width: "100%",
-    justifyContent: "flex-end",
-  },
-  cameraButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 20,
-  },
-  image: {
-    width: 100,
-    height: 100,
-    marginTop: 20,
-  },
+	container: {
+		flex: 1,
+		padding: 20,
+	},
+	camera: {
+		flex: 1,
+		width: "100%",
+		justifyContent: "flex-end",
+	},
+	cameraButtonContainer: {
+		flexDirection: "row",
+		justifyContent: "space-around",
+		marginBottom: 20,
+	},
+	image: {
+		width: 100,
+		height: 100,
+		marginTop: 20,
+	},
 });

@@ -1,22 +1,17 @@
-import {
-	Button,
-	StyleSheet,
-	TouchableOpacity,
-} from "react-native";
-import { Text, View } from "@/components/Themed";
-import {
-	Camera,
-	CameraView,
-	useCameraPermissions,
-} from "expo-camera";
+import { Button, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Text } from "@/components/Themed";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { Camera, CameraType } from "expo-camera/legacy";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useRef, useState } from "react";
 import { snap } from "@/Service/PhotosActions";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function TabOneScreen() {
 	const [permission, requestPermission] = useCameraPermissions();
 	const cameraRef = useRef<CameraView | null>(null);
 	const [isCameraVisible, setIsCameraVisible] = useState(false);
+
 
 	useFocusEffect(
 		useCallback(() => {
@@ -42,26 +37,35 @@ export default function TabOneScreen() {
 				<Text style={styles.permissionText}>
 					We need your permission to show the camera
 				</Text>
+
 				<Button onPress={requestPermission} title="Grant Permission" />
 			</View>
 		);
 	}
+	// const handleFacesDetected = ({ faces }) => {
+	// 	if (faces.length > 0 && !photoTaken) {
+	// 		snap(cameraRef.current as Camera);
+	// 		      setPhotoTaken(true);
+
+	// 	}
+	// };
 
 	return (
 		<View style={styles.container}>
 			{isCameraVisible && (
 				<CameraView
-					ref={cameraRef}
-					facing="back"
+				className="flex-1 justify-center align-middle content-center items-center"
+					ref={cameraRef }
+					facing={CameraType.back}
 					style={styles.camera}
+					
+					// onFacesDetected={handleFacesDetected}
 				>
-					<View style={styles.buttonContainer}>
-						<TouchableOpacity
-							style={styles.button}
-							onPress={() => snap( cameraRef.current as CameraView)}
-						>
-							<Text style={styles.buttonText}>Reconocer</Text>
+					<View className="flex-1 justify-end items-center m-9 ">
+						<TouchableOpacity className='flex bg-white content-center justify-center align-middle items-center  rounded-full h-20 w-20 text-white' onPress={()=>snap(cameraRef.current as CameraView)}>
+							<MaterialCommunityIcons name="camera-iris" size={48}/>
 						</TouchableOpacity>
+
 					</View>
 				</CameraView>
 			)}
@@ -86,7 +90,7 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	button: {
-		flex: 1,
+		display: "flex",
 		alignItems: "center",
 		backgroundColor: "rgba(0, 0, 0, 0.5)",
 		padding: 10,
@@ -103,4 +107,3 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 });
-
