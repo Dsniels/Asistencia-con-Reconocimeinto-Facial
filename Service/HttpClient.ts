@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL ="https://apirecognition-a4dngeb8atfeeea5.mexicocentral-01.azurewebsites.net/"
+axios.defaults.baseURL ="https://apirecognitionrn-fyfgbdh0bch5e5ek.mexicocentral-01.azurewebsites.net"
 
 
 axios.interceptors.request.use(

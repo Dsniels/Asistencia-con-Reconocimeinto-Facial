@@ -4,13 +4,20 @@ import { CameraCapturedPicture } from "expo-camera/build/legacy/Camera.types";
 import { Alumno } from "@/Types/Registro";
 import { Camera } from "expo-camera/legacy";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { SetStateAction } from "react";
 
-export const snap = async (camera: CameraView | Camera) => {
+export const snap = async (camera: CameraView | Camera, action : SetStateAction<any>, orientation:number) => {
 	try {
 		if (camera) {
-			let photo = await camera.takePictureAsync({ base64: true ,});
+			let photo = await camera.takePictureAsync({ base64: true , exif:true, skipProcessing: true, });
 			if (photo) {
-				// photo  = await rotateImage(photo);
+				if(orientation === 4){
+					photo = await rotateImage(photo);
+				}
+				action((prev:any)=>({
+					...prev,
+					imagen : photo
+				}))
 				const data = prepareData(photo as CameraCapturedPicture);
 				Api.reconocimiento(data);
 			}
@@ -23,7 +30,7 @@ export const snap = async (camera: CameraView | Camera) => {
 const rotateImage = async (image: CameraCapturedPicture) => {
 	return await manipulateAsync(
 		image.uri,
-		[{ rotate: 90 }],
+		[{ rotate: 270 }],
 		{ compress: 1, format: SaveFormat.JPEG, base64: true }
 	);
 };
