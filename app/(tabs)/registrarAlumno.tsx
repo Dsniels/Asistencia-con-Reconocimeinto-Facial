@@ -43,6 +43,22 @@ export default function RegistroAlumno() {
 		}
 	};
 
+	const [orientation, setOrientation] = useState(
+		ScreenOrientation.Orientation.PORTRAIT_UP
+	);
+
+	useEffect(() => {
+		const subscription = ScreenOrientation.addOrientationChangeListener(
+			(event) => {
+				setOrientation(event.orientationInfo.orientation);
+			}
+		);
+
+		return () => {
+			ScreenOrientation.removeOrientationChangeListener(subscription);
+		};
+	}, [orientation]);
+
 	const rotateImage = async (
 		image: CameraCapturedPicture
 	): Promise<CameraCapturedPicture> => {
@@ -62,11 +78,11 @@ export default function RegistroAlumno() {
 	const takePicture = async () => {
 		if (cameraRef) {
 			let photo = (await cameraRef.takePictureAsync({
+				skipProcessing: true,
 				exif: true,
 			})) as CameraCapturedPicture;
 			if (photo) {
 
-				photo = await rotateImage(photo);
 				setAlumno((prev) => ({
 					...prev,
 					imagen: photo,
