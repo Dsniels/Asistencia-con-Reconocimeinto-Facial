@@ -19,7 +19,6 @@ class Actions implements IActions {
 					resolve(response.data);
 				})
 				.catch((e) => {
-					console.log(e);
 					ToastAndroid.show(e.message|| 'Surgio un Error',ToastAndroid.SHORT);
 					reject(e);
 				});
@@ -66,6 +65,7 @@ class Actions implements IActions {
 
 	reconocimiento(imagen: FormData): Promise<Object> {
 		return new Promise((resolve, reject) => {
+			console.log('Post...')
 			HttpClient.post("recognize", imagen)
 				.then(async (response: AxiosResponse<ResponseApi>) => {
 					if(response.data.status === 'fail'){
@@ -94,7 +94,6 @@ class Actions implements IActions {
 					resolve(response.data);
 				})
 				.catch((e) => {
-					console.log(e);
 					ToastAndroid.show(e.message|| 'Surgio un Error',ToastAndroid.SHORT);
 					reject(e);
 				});
