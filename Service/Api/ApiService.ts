@@ -42,7 +42,6 @@ export class ApiService implements IActions {
 	getStatus() {
 		return new Promise((resolve, reject) => {
 			HttpClient.get("").then((response) => {
-				console.log(response);
 				resolve(response)
 			});
 		});

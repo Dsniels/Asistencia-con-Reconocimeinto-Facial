@@ -11,7 +11,7 @@ export type Alumno = {
     nombre :string,
     primerApellido : string,
     segundoApellido : string,
-    matricula : number,
+    matricula : number| undefined,
     grupo : number | undefined,
     imagen : CameraCapturedPicture | null|  ImageResult
 }
