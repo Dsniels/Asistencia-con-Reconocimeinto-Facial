@@ -1,56 +1,79 @@
 import { CameraView } from "expo-camera";
-import { Api } from "./Api/Actions";
 import { CameraCapturedPicture } from "expo-camera/build/legacy/Camera.types";
-import { Alumno } from "@/Types/Registro";
 import { Camera } from "expo-camera/legacy";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { SetStateAction } from "react";
+import { formatData, FormatData } from "./FormatData";
+import { ToastAndroid } from "react-native";
 
-export const snap = async (camera: CameraView | Camera, action : SetStateAction<any>, orientation:number) => {
-	try {
-		if (camera) {
-			let photo = await camera.takePictureAsync({ base64: true , exif:true, skipProcessing: true, });
-			if (photo) {
-				if(orientation === 4){
-					photo = await rotateImage(photo);
-				}
-				action((prev:any)=>({
-					...prev,
-					imagen : photo
-				}))
-				const data = prepareData(photo as CameraCapturedPicture);
-				Api.reconocimiento(data);
-			}
-		}
-	} catch (e) {
-		console.log("error on snap: ", e);
+class ImageActions {
+	private prepareData: FormatData;
+
+	constructor(formData: FormatData) {
+		this.prepareData = formData;
 	}
-};
 
-const rotateImage = async (image: CameraCapturedPicture) => {
-	return await manipulateAsync(
-		image.uri,
-		[{ rotate: 270 }],
-		{ compress: 1, format: SaveFormat.JPEG, base64: true }
-	);
-};
+	private async _takePhoto(
+		cam: CameraView | Camera,
+		orientation: number
+	): Promise<CameraCapturedPicture | null> {
+		try {
+			if (cam) {
+				let photo = await cam.takePictureAsync({
+					skipProcessing: true,
+					base64: true,
+				});
+				if (photo && orientation === 4) {
+					photo = await this.rotateImage(photo);
+				}
+				return photo as CameraCapturedPicture;
+			}
+		} catch (e: any) {
+			console.error('ERROR EN METODO TAKE',e);
+			ToastAndroid.show(
+				e.message || "Surgio un Error",
+				ToastAndroid.SHORT
+			);
+		}
+		return null;
+	}
 
-const prepareData = (imagen: CameraCapturedPicture): FormData => {
-	const data = new FormData();
-	let filename = imagen.uri.split("/").pop();
-	let match = /\.(\w+)$/.exec(filename as string);
-	let type = match ? `image/${match[1]}` : `image`;
-    //@ts-ignore
-	data.append("file", { uri: imagen.uri, name: "file", type });
-	return data;
-};
+	async takePhoto(
+		cam: CameraView | Camera,
+		action: SetStateAction<any>,
+		orientation: number
+	) {
+		const photo = await this._takePhoto(cam, orientation);
+		if (photo) {
+			action((prev: any) => ({
+				...prev,
+				imagen: photo,
+			}));
+		}
+	}
 
-export const prepareRegister = (usuario : Alumno) =>{
-	const value = Object.values(usuario)
-	const valueFiltrados = value.filter(value => typeof value ==='string'  )
-	const nombre = valueFiltrados.join(' ').toUpperCase() + usuario.matricula;
-	let formData = prepareData(usuario.imagen as CameraCapturedPicture)
-	formData.append('nombre',nombre);
-	Api.registro(formData)
+	async takePhotoAndSend(
+		cam: CameraView | Camera,
+		action: SetStateAction<any>,
+		orientation: number
+	) {
+		const photo = await this._takePhoto(cam, orientation);
+		if (photo) {
+			action((prev: any) => ({
+				...prev,
+				imagen: photo,
+			}));
+			this.prepareData.sendImage(photo as CameraCapturedPicture);
+		}
+	}
 
+	private async rotateImage(image: CameraCapturedPicture) {
+		return await manipulateAsync(image.uri, [{ rotate: 270 }], {
+			compress: 1,
+			format: SaveFormat.JPEG,
+			base64: true,
+		});
+	}
 }
+
+export const imageActions = new ImageActions(formatData);
