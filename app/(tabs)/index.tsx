@@ -54,17 +54,7 @@ export default function TabOneScreen() {
 		return <View />;
 	}
 
-	if (!permission.granted) {
-		return (
-			<View style={styles.container}>
-				<Text style={styles.permissionText}>
-					We need your permission to show the camera
-				</Text>
 
-				<Button onPress={requestPermission} title="Grant Permission" />
-			</View>
-		);
-	}
 	return (
 		<SafeAreaView className="flex-1 mb-8 items-center justify-center ">
 			{isCameraVisible && (

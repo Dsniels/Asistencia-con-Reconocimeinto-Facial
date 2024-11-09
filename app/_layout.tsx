@@ -67,6 +67,7 @@ export default function RootLayout() {
 	if (!authenticated) {
 		return (
 			<View
+			className="bg-white"
 				style={{
 					flex: 1,
 					justifyContent: "center",
