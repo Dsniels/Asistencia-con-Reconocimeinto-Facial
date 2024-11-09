@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.danielsrd.myapp"
     },
     "web": {
       "bundler": "metro",
@@ -28,7 +29,7 @@
     },
     "plugins": [
       "expo-router",
-            [
+      [
         "expo-screen-orientation",
         {
           "initialOrientation": "DEFAULT"
