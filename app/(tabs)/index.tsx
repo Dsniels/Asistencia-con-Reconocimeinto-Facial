@@ -5,8 +5,8 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	View,
+	Text
 } from "react-native";
-import { Text } from "@/components/Themed";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { CameraType } from "expo-camera/legacy";
 import { useFocusEffect } from "@react-navigation/native";
@@ -30,7 +30,6 @@ export default function TabOneScreen() {
 				setOrientation(event.orientationInfo.orientation);
 			}
 		);
-		console.log(orientation);
 
 		return () => {
 			ScreenOrientation.removeOrientationChangeListener(subscription);
@@ -67,42 +66,41 @@ export default function TabOneScreen() {
 		);
 	}
 	return (
-		<SafeAreaView className="flex-1 items-center justify-center " >
+		<SafeAreaView className="flex-1 mb-8 items-center justify-center ">
 			{isCameraVisible && (
 				<CameraView
-					className="flex-1  justify-center align-middle content-center items-center"
+					className="flex-1 h-max  justify-center align-middle content-center items-center"
 					ref={cameraRef}
 					facing={CameraType.back}
 					style={styles.camera}
 				>
-					<View className="flex-1 justify-end items-center m-9 ">
-						<TouchableOpacity
-							className="flex bg-white content-center justify-center align-middle items-center rounded-full h-20 w-20 text-white"
-							onPress={() =>
-								imageActions.takePhotoAndSend(
-									cameraRef.current as CameraView,
-									setImage,
-									orientation
-								)
-							}
-						>
-							<MaterialCommunityIcons 
-								name="camera-iris"
-								size={48}
-							/>
-						</TouchableOpacity>
-					</View>
+						<View className="flex-1 justify-end items-center m-9 ">
+							<TouchableOpacity
+								className="flex bg-white content-center justify-center align-middle items-center rounded-full h-20 w-20 text-white"
+								onPress={() =>
+									imageActions.takePhotoAndSend(
+										cameraRef.current as CameraView,
+										setImage,
+										orientation
+									)
+								}
+							>
+								<MaterialCommunityIcons
+									name="camera-iris"
+									size={48}
+								/>
+							</TouchableOpacity>
+							{image.imagen && (
+									<View className="absolute bottom-2 left-80 rounded-xl p-4">
+										<Image
+											source={{ uri: image?.imagen?.uri }}
+											style={{ width: 50, height: 50 }}
+										/>
+									</View>
+								)}
+						</View>
 				</CameraView>
 			)}
-			{image.imagen && (
-				<View>
-					<Image
-						source={{ uri: image?.imagen?.uri }}
-						style={{ width: 100, height: 100 }}
-					/>
-				</View>
-			)}
-		
 		</SafeAreaView>
 	);
 }

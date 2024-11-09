@@ -3,8 +3,9 @@ import {
 	SafeAreaView,
 	ScrollView,
 	StyleSheet,
+	Text,
 } from "react-native";
-import { Text, View } from "@/components/Themed";
+import {  View } from "@/components/Themed";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";

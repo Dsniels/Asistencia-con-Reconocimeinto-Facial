@@ -5,23 +5,28 @@ import {
 	TextInput,
 	Button,
 	Image,
-	View,
+	
 	ToastAndroid,
 	SafeAreaView,
+	Pressable,
+	Text,
+	ScrollView,
 } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Camera, CameraView } from "expo-camera";
 import { Alumno } from "@/Types/Registro";
 import { formatData } from "@/Service/FormatData";
-import { Text } from "@/components/Themed";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { imageActions } from "@/Service/PhotosActions";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { View } from "@/components/Themed";
 export default function RegistroAlumno() {
 	const [alumno, setAlumno] = useState<Alumno>({
-		nombre: "",
-		matricula: 0,
-		primerApellido: "",
-		segundoApellido: "",
+		nombre: "".trim(),
+		matricula: undefined,
+		primerApellido: "".trim(),
+		segundoApellido: "".trim(),
 		imagen: null,
 		grupo: undefined,
 	});
@@ -71,7 +76,6 @@ export default function RegistroAlumno() {
 			}
 			setIsCameraOpen(false);
 		} catch (e: any) {
-			console.log(e)
 			ToastAndroid.show(
 				e.message || "Surgio un Error",
 				ToastAndroid.SHORT
@@ -92,112 +96,179 @@ export default function RegistroAlumno() {
 	};
 
 	return (
-			<SafeAreaView style={styles.container}>
-			<Text>Registro de alumnos</Text>
-			<View>
-				<Text>Nombre</Text>
-				<TextInput
-					style={{ color: "black" }}
-					value={alumno.nombre}
-					onChangeText={(text) =>
-						setAlumno((prev) => ({ ...prev, nombre: text }))
-					}
-				/>
-				<Text>Apellido Paterno</Text>
-				<TextInput
-					style={{ color: "black" }}
-					value={alumno.primerApellido}
-					onChangeText={(text) =>
-						setAlumno((prev) => ({ ...prev, primerApellido: text }))
-					}
-				/>
-				<Text>Apellido Materno</Text>
-				<TextInput
-					style={{ color: "black" }}
-					value={alumno.segundoApellido}
-					onChangeText={(text) =>
-						setAlumno((prev) => ({
-							...prev,
-							segundoApellido: text,
-						}))
-					}
-				/>
-				<Text>Matricula</Text>
-				<TextInput
-					inputMode="numeric"
-					style={{ color: "black" }}
-					value={alumno.matricula.toString()}
-					onChangeText={(text) =>
-						setAlumno((prev) => ({
-							...prev,
-							matricula: Number(text),
-						}))
-					}
-				/>
-				<Text>Grupo</Text>
-				<TextInput
-					inputMode="numeric"
-					style={{ color: "black" }}
-					onChangeText={(text) =>
-						setAlumno((prev) => ({
-							...prev,
-							grupo: Number(text),
-						}))
-					}
-				/>
-				<Button title="Tomar Foto" onPress={openCamera} />
-				{alumno.imagen && (
-					<View>
-						<Button
-							title="Eliminar foto"
-							onPress={() =>
-								setAlumno((prev) => ({ ...prev, imagen: null }))
+		<SafeAreaView style={styles.container}>
+			<ScrollView>
+				<View className="flex m-3 mb-5 p-5 h-full shadow-sm   items-center  rounded-3xl  ">
+					<Text className="m-3 text-2xl font-bold subpixel-antialiased">
+						Registro de alumnos
+					</Text>
+					<Image
+						source={
+							alumno.imagen
+								? {
+										uri: alumno.imagen.uri,
+								  }
+								: require("../../assets/images/Avatar.png")
+						}
+						style={styles.image}
+					/>
+
+					<View className="mb-5 min-w-96  ">
+						<Text className="text-xs m-1">Nombre</Text>
+						<TextInput
+							className="border p-2 border-gray-500 rounded-md text-black"
+							style={{ color: "black" }}
+							value={alumno.nombre}
+							onChangeText={(text) =>
+								setAlumno((prev) => ({ ...prev, nombre: text }))
 							}
 						/>
-						<Ionicons name="remove" size={10} />
-						<Image
-							source={{ uri: alumno.imagen.uri }}
-							style={styles.image}
+					</View>
+					<View className="mb-5 min-w-96  ">
+						<Text className="text-xs m-1">Apellido Paterno</Text>
+						<TextInput
+							className="border p-2 border-gray-500 rounded-md text-black"
+							style={{ color: "black" }}
+							value={alumno.primerApellido}
+							onChangeText={(text) =>
+								setAlumno((prev) => ({
+									...prev,
+									primerApellido: text,
+								}))
+							}
 						/>
 					</View>
-				)}
-			</View>
+					<View className="mb-5 min-w-96 ">
+						<Text className="text-xs m-1">Apellido Materno</Text>
+						<TextInput
+							className="border p-2 border-gray-500 rounded-md text-black"
+							style={{ color: "black" }}
+							value={alumno.segundoApellido}
+							onChangeText={(text) =>
+								setAlumno((prev) => ({
+									...prev,
+									segundoApellido: text,
+								}))
+							}
+						/>
+					</View>
+					<View className="flex-row justify-stretch">
+						<View className="m-2 w-20 ">
+							<Text className="text-xs m-1">Matricula</Text>
+							<TextInput
+								className="border p-2 border-gray-500 rounded-md text-black"
+								inputMode="numeric"
+								style={{ color: "black" }}
+								onChangeText={(text) =>
+									setAlumno((prev) => ({
+										...prev,
+										matricula: Number(text),
+									}))
+								}
+							/>
+						</View>
+						<View className="m-2 w-20">
+							<Text className="text-xs m-1">Grupo</Text>
+							<TextInput
+								className="border p-2 border-gray-500 rounded-md text-black"
+								inputMode="numeric"
+								style={{ color: "black" }}
+								onChangeText={(text) =>
+									setAlumno((prev) => ({
+										...prev,
+										grupo: Number(text),
+									}))
+								}
+							/>
+						</View>
+						{alumno.imagen ? (
+							<Pressable
+								className="flex justify-center items-center"
+								onPress={() =>
+									setAlumno((prev) => ({
+										...prev,
+										imagen: null,
+									}))
+								}
+							>
+								<Text className="text-sm m-1">
+									Eliminar Foto
+								</Text>
 
-			<Modal
-				visible={isCameraOpen}
-				animationType="slide"
-				transparent={false}
-			>
-				<CameraView
-					mute={true}
-					style={styles.camera}
-					ref={(ref) => setCameraRef(ref)}
+								<AntDesign
+									name="delete"
+									size={40}
+									color="#164E63"
+								/>
+							</Pressable>
+						) : (
+							<Pressable
+								className="flex justify-center items-center"
+								onPress={openCamera}
+							>
+								<Text className="text-sm m-1">Tomar Foto</Text>
+								<MaterialIcons
+									name="add-a-photo"
+									size={40}
+									color="#164E63"
+								/>
+							</Pressable>
+						)}
+					</View>
+					<Pressable
+						className="flex h-14 w-full m-9  color-white bg-cyan-700 shadow-md shadow-cyan-600 justify-center items-center align-middle p-2 rounded-xl "
+						disabled={
+							!(
+								alumno.imagen &&
+								alumno.primerApellido &&
+								alumno.matricula &&
+								alumno.grupo
+							)
+						}
+						onPress={submit}
+					>
+						<Text className=" text-white ">Registrar</Text>
+					</Pressable>
+				</View>
+
+				<Modal
+					visible={isCameraOpen}
+					animationType="slide"
+					transparent={false}
 				>
-					<View style={styles.cameraButtonContainer}>
-						<Button title="Tomar" onPress={takePicture} />
-						<Button
-							title="Cerrar"
-							onPress={() => setIsCameraOpen(false)}
-						/>
-					</View>
-				</CameraView>
-			</Modal>
-
-			<Button
-				disabled={!alumno.imagen}
-				title="Registrar"
-				onPress={submit}
-			/>
+					<CameraView
+						mute={true}
+						style={styles.camera}
+						ref={(ref) => setCameraRef(ref)}
+					>
+						<View className="bg-transparent"  style={styles.cameraButtonContainer}>
+							<Pressable className="bg-white rounded-full" onPress={takePicture}>
+								<MaterialCommunityIcons
+									name="camera-iris"
+									size={60}
+									color="#164E63"
+								/>
+							</Pressable>
+							<Pressable className="bg-white rounded-full" onPress={() => setIsCameraOpen(false)}>
+								<MaterialIcons
+									name="cancel"
+									size={60}
+									color="#164E63"
+								/>
+							</Pressable>
+						</View>
+					</CameraView>
+				</Modal>
+			</ScrollView>
 		</SafeAreaView>
-		
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
-		margin:20,
+		marginTop: 20,
 		flex: 1,
-		padding: 20,
+		padding: 10,
 	},
 	camera: {
 		flex: 1,
@@ -208,10 +279,12 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-around",
 		marginBottom: 20,
+		backgroundColor:'transparent'
 	},
 	image: {
-		width: 100,
-		height: 100,
+		borderRadius: 100,
+		width: 150,
+		height: 150,
 		marginTop: 20,
 	},
 });
