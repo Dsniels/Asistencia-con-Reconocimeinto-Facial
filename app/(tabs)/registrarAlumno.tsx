@@ -6,14 +6,16 @@ import {
 	Button,
 	Image,
 	View,
+	ToastAndroid,
+	SafeAreaView,
 } from "react-native";
-import { Camera, CameraCapturedPicture, CameraView } from "expo-camera";
+import { Camera, CameraView } from "expo-camera";
 import { Alumno } from "@/Types/Registro";
-import { prepareRegister } from "@/Service/PhotosActions";
+import { formatData } from "@/Service/FormatData";
 import { Text } from "@/components/Themed";
 import { Ionicons } from "@expo/vector-icons";
-import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { imageActions } from "@/Service/PhotosActions";
 export default function RegistroAlumno() {
 	const [alumno, setAlumno] = useState<Alumno>({
 		nombre: "",
@@ -21,6 +23,7 @@ export default function RegistroAlumno() {
 		primerApellido: "",
 		segundoApellido: "",
 		imagen: null,
+		grupo: undefined,
 	});
 	const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 	const [cameraRef, setCameraRef] = useState<CameraView | null>(null);
@@ -59,57 +62,42 @@ export default function RegistroAlumno() {
 		};
 	}, [orientation]);
 
-	const rotateImage = async (
-		image: CameraCapturedPicture
-	): Promise<CameraCapturedPicture> => {
-		await Image.getSize(image.uri, async (w, h) => {
-			if (w > h) {
-				return await manipulateAsync(image.uri, [{ rotate: 90 }], {
-					compress: 1,
-					format: SaveFormat.JPEG,
-					base64: true,
-				});
-			}
-		});
-
-		return image;
-	};
-
 	const takePicture = async () => {
-		if (cameraRef) {
-			let photo = (await cameraRef.takePictureAsync({
-				skipProcessing: true,
-				exif: true,
-			})) as CameraCapturedPicture;
-			if (photo) {
-
-				setAlumno((prev) => ({
-					...prev,
-					imagen: photo,
-				}));
-				setIsCameraOpen(false);
+		try {
+			if (cameraRef) {
+				await imageActions.takePhoto(cameraRef, setAlumno, orientation);
+			} else {
+				throw new Error("No se Pudo Tomar la foto");
 			}
+			setIsCameraOpen(false);
+		} catch (e: any) {
+			console.log(e)
+			ToastAndroid.show(
+				e.message || "Surgio un Error",
+				ToastAndroid.SHORT
+			);
 		}
 	};
 
 	const submit = () => {
-		prepareRegister(alumno);
+		formatData.prepareRegister(alumno);
 		setAlumno({
 			nombre: "",
 			primerApellido: "",
 			segundoApellido: "",
 			matricula: 0,
 			imagen: null,
+			grupo: undefined,
 		});
 	};
 
 	return (
-		<View style={styles.container}>
+			<SafeAreaView style={styles.container}>
 			<Text>Registro de alumnos</Text>
 			<View>
 				<Text>Nombre</Text>
 				<TextInput
-					style={{ color: "white" }}
+					style={{ color: "black" }}
 					value={alumno.nombre}
 					onChangeText={(text) =>
 						setAlumno((prev) => ({ ...prev, nombre: text }))
@@ -117,7 +105,7 @@ export default function RegistroAlumno() {
 				/>
 				<Text>Apellido Paterno</Text>
 				<TextInput
-					style={{ color: "white" }}
+					style={{ color: "black" }}
 					value={alumno.primerApellido}
 					onChangeText={(text) =>
 						setAlumno((prev) => ({ ...prev, primerApellido: text }))
@@ -125,7 +113,7 @@ export default function RegistroAlumno() {
 				/>
 				<Text>Apellido Materno</Text>
 				<TextInput
-					style={{ color: "white" }}
+					style={{ color: "black" }}
 					value={alumno.segundoApellido}
 					onChangeText={(text) =>
 						setAlumno((prev) => ({
@@ -137,12 +125,23 @@ export default function RegistroAlumno() {
 				<Text>Matricula</Text>
 				<TextInput
 					inputMode="numeric"
-					style={{ color: "white" }}
+					style={{ color: "black" }}
 					value={alumno.matricula.toString()}
 					onChangeText={(text) =>
 						setAlumno((prev) => ({
 							...prev,
 							matricula: Number(text),
+						}))
+					}
+				/>
+				<Text>Grupo</Text>
+				<TextInput
+					inputMode="numeric"
+					style={{ color: "black" }}
+					onChangeText={(text) =>
+						setAlumno((prev) => ({
+							...prev,
+							grupo: Number(text),
 						}))
 					}
 				/>
@@ -189,12 +188,14 @@ export default function RegistroAlumno() {
 				title="Registrar"
 				onPress={submit}
 			/>
-		</View>
+		</SafeAreaView>
+		
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
+		margin:20,
 		flex: 1,
 		padding: 20,
 	},

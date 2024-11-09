@@ -21,13 +21,13 @@ export default function TabLayout() {
 		<Tabs
 			screenOptions={{
 				tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-				headerShown: useClientOnlyValue(false, true),
+				headerShown: false,
 			}}
 		>
 			<Tabs.Screen
 				name="index"
 				options={{
-					title: "Reconocer Alumnos",
+					title:"Reconocimiento",
 					tabBarIcon: ({ color }) => (
 						<TabBarIcon name="camera" color={color} />
 					),

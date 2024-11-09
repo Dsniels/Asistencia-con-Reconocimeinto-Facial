@@ -1,6 +1,7 @@
 import {
 	Button,
 	Image,
+	SafeAreaView,
 	StyleSheet,
 	TouchableOpacity,
 	View,
@@ -10,7 +11,7 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { CameraType } from "expo-camera/legacy";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { snap } from "@/Service/PhotosActions";
+import { imageActions } from "@/Service/PhotosActions";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ScreenOrientation from "expo-screen-orientation";
 export default function TabOneScreen() {
@@ -66,27 +67,26 @@ export default function TabOneScreen() {
 		);
 	}
 	return (
-		<View style={styles.container}>
+		<SafeAreaView className="flex-1 items-center justify-center " >
 			{isCameraVisible && (
 				<CameraView
-					className="flex-1 justify-center align-middle content-center items-center"
+					className="flex-1  justify-center align-middle content-center items-center"
 					ref={cameraRef}
 					facing={CameraType.back}
 					style={styles.camera}
-
 				>
 					<View className="flex-1 justify-end items-center m-9 ">
 						<TouchableOpacity
-							className="flex bg-white content-center justify-center align-middle items-center  rounded-full h-20 w-20 text-white"
+							className="flex bg-white content-center justify-center align-middle items-center rounded-full h-20 w-20 text-white"
 							onPress={() =>
-								snap(
+								imageActions.takePhotoAndSend(
 									cameraRef.current as CameraView,
 									setImage,
 									orientation
 								)
 							}
 						>
-							<MaterialCommunityIcons
+							<MaterialCommunityIcons 
 								name="camera-iris"
 								size={48}
 							/>
@@ -102,7 +102,8 @@ export default function TabOneScreen() {
 					/>
 				</View>
 			)}
-		</View>
+		
+		</SafeAreaView>
 	);
 }
 
