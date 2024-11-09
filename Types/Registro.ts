@@ -1,19 +1,23 @@
-import { CameraCapturedPicture } from "expo-camera"
+import { CameraCapturedPicture } from "expo-camera";
 import { ImageResult } from "expo-image-manipulator";
 
-
-
+export type asistencias = {
+    [group: string]: {
+        [date: string]: string[];
+    };
+};
 
 export type Alumno = {
     nombre :string,
     primerApellido : string,
     segundoApellido : string,
-    matricula : number 
+    matricula : number,
+    grupo : number | undefined,
     imagen : CameraCapturedPicture | null|  ImageResult
 }
 
 export interface IActions {
-    registro( imagen: FormData) : Promise<Object>;
-    reconocimiento(imagen:FormData):Promise<Object>;
+    registro( imagen: FormData) : Promise<void>;
+    reconocimiento(imagen:FormData):Promise<void>;
 }
 
