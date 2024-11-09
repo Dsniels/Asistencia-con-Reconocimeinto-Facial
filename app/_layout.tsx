@@ -9,9 +9,9 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, Image, Pressable } from "react-native";
 import "react-native-reanimated";
-
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import "../global.css";
 
 import { useColorScheme } from "@/components/useColorScheme";
@@ -73,11 +73,12 @@ export default function RootLayout() {
 					alignItems: "center",
 				}}
 			>
-				
-				<Button
-					title="Ingresar"
-					onPress={() => authenticate()}
-				/>
+				<Image source={require("../assets/images/FingerPrint.png")} className="h-60 w-64 m-4" />
+				<Pressable className=" flex top-8 items-center justify-around w-auto h-auto" onPress={()=>authenticate()}>
+					<Text>Login</Text>
+					<MaterialIcons name="fingerprint" size={50} color="black" />
+				</Pressable>
+
 			</View>
 		);
 	}
@@ -94,10 +95,10 @@ function RootLayoutNav() {
 
 	return (
 		<ThemeProvider
-			value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+			value={DefaultTheme}
 		>
-			<Stack>
-				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+			<Stack screenOptions={{contentStyle:{backgroundColor:"Transparent"}}}>
+				<Stack.Screen name="(tabs)" options={{ headerShown: false }}  />
 				<Stack.Screen
 					name="modal"
 					options={{ presentation: "modal" }}
