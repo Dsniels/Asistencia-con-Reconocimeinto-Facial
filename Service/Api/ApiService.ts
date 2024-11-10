@@ -42,7 +42,7 @@ export class ApiService implements IActions {
 	getStatus() {
 		return new Promise((resolve, reject) => {
 			HttpClient.get("").then((response) => {
-				resolve(response)
+				resolve(response);
 			});
 		});
 	}
@@ -52,14 +52,14 @@ export class ApiService implements IActions {
 			HttpClient.post("recognize", imagen)
 				.then(async (response: AxiosResponse<ResponseApi>) => {
 					if (response.data.status === "fail") {
-						throw new Error("No se pudo detectar un Rostro");
+						throw new Error(response.data.message);
 					}
 					const detectedNames = response.data.matches || [];
 					const currentDate = new Date().toISOString().split("T")[0];
 
 					detectedNames.forEach((match: string) => {
 						const [group, ...rest] = match.split(" ");
-						const name = rest.slice(0, -1).join(" ");
+						const name = rest.slice(0, -1).join(" ").trim();
 						const id = rest[rest.length - 1];
 
 						if (!this.detectedNamesMap[group]) {
@@ -70,7 +70,7 @@ export class ApiService implements IActions {
 								new Set();
 						}
 						this.detectedNamesMap[group][currentDate].add(
-							`${id}  ${name}`
+							`${id} ${name}`
 						);
 					});
 
@@ -98,6 +98,39 @@ export class ApiService implements IActions {
 						ToastAndroid.CENTER
 					);
 
+					resolve();
+				})
+				.catch((e) => {
+					ToastAndroid.show(
+						e.message || "Surgio un Error",
+						ToastAndroid.SHORT
+					);
+					resolve();
+				});
+		});
+	}
+
+	deleteUser(body: FormData): Promise<void> {
+		return new Promise((resolve, reject) => {
+			HttpClient.post("/delete_user", body)
+				.then((response) => {
+					ToastAndroid.show("Usuario Eliminado", ToastAndroid.LONG);
+				})
+				.catch((e) => {
+					ToastAndroid.show(
+						e.message || "Error al Eliminar",
+						ToastAndroid.SHORT
+					);
+					reject(e);
+				});
+		});
+	}
+
+	editarUsuario(body: FormData): Promise<void> {
+		return new Promise((resolve, reject) => {
+			HttpClient.put("/edit", body)
+				.then((response: AxiosResponse) => {
+					ToastAndroid.show("Usuario Editado", ToastAndroid.SHORT);
 					resolve();
 				})
 				.catch((e) => {

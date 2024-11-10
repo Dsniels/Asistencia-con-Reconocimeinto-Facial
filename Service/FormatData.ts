@@ -2,12 +2,16 @@ import { Alumno } from "@/Types/Registro";
 import { CameraCapturedPicture } from "expo-camera";
 import { Api, ApiService } from "./Api/ApiService";
 import { ToastAndroid } from "react-native";
+import { saveData, StorageService } from "./StorageService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export class FormatData {
 	private Api: ApiService;
+	private Store: StorageService;
 
-	constructor(api: ApiService) {
+	constructor(api: ApiService, store: StorageService) {
 		this.Api = api;
+		this.Store = store;
 	}
 
 	sendImage(imagen: CameraCapturedPicture): void {
@@ -15,21 +19,30 @@ export class FormatData {
 		ToastAndroid.show("Procesando...", ToastAndroid.SHORT);
 		Api.reconocimiento(data);
 	}
-
-	prepareRegister(usuario: Alumno) {
+	joinData(usuario: Alumno) {
 		const value = Object.values(usuario);
 		const valueFiltrados = value.filter(
 			(value) => typeof value === "string"
 		);
+		const cleanedValues = valueFiltrados.map(v=>v.trim())
+		const nombre = `${usuario.grupo} ${cleanedValues
+			.join(" ")
+			.toUpperCase()} ${usuario.matricula}`;
+		return nombre;
+	}
+
+	prepareRegister(usuario: Alumno) {
 		if (usuario.grupo && usuario.matricula) {
-			const nombre = `${usuario.grupo} ${valueFiltrados
-				.join(" ")
-				.toUpperCase()} ${usuario.matricula}`;
+			const nombre = this.joinData(usuario);
 			let formData = this.prepareData(
 				usuario.imagen as CameraCapturedPicture
 			);
 			formData.append("nombre", nombre);
-            ToastAndroid.showWithGravity("Registrando Alumno", ToastAndroid.LONG, ToastAndroid.CENTER)
+			ToastAndroid.showWithGravity(
+				"Registrando Alumno",
+				ToastAndroid.LONG,
+				ToastAndroid.CENTER
+			);
 			this.Api.registro(formData);
 		} else {
 			ToastAndroid.show(
@@ -37,6 +50,24 @@ export class FormatData {
 				ToastAndroid.LONG
 			);
 		}
+	}
+
+	editar(currentName: string, newName: string) {
+		queueMicrotask(() => {this.Store.editUser(currentName, newName)});
+
+		let body = new FormData();
+		body.append("currentName", currentName);
+		body.append("newName", newName);
+		//AsyncStorage.clear();
+		this.Api.editarUsuario(body);
+
+	}
+
+	async prepareForDelete(name:string){
+		let body = new FormData();
+		body.append("nombre", name);
+		queueMicrotask(()=>{this.Store.deleteUser(name)});
+		await this.Api.deleteUser(body);
 	}
 
 	private prepareData(imagen: CameraCapturedPicture): FormData {
@@ -50,4 +81,4 @@ export class FormatData {
 	}
 }
 
-export const formatData = new FormatData(Api);
+export const formatData = new FormatData(Api, saveData);
