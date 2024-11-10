@@ -84,6 +84,8 @@ export default function RegistroAlumno() {
 	};
 
 	const submit = () => {
+		
+
 		formatData.prepareRegister(alumno);
 		setAlumno({
 			nombre: "",
@@ -133,7 +135,7 @@ export default function RegistroAlumno() {
 							onChangeText={(text) =>
 								setAlumno((prev) => ({
 									...prev,
-									primerApellido: text,
+									primerApellido: text.trim(),
 								}))
 							}
 						/>
@@ -147,7 +149,7 @@ export default function RegistroAlumno() {
 							onChangeText={(text) =>
 								setAlumno((prev) => ({
 									...prev,
-									segundoApellido: text,
+									segundoApellido: text.trim(),
 								}))
 							}
 						/>
@@ -162,7 +164,7 @@ export default function RegistroAlumno() {
 								onChangeText={(text) =>
 									setAlumno((prev) => ({
 										...prev,
-										matricula: Number(text),
+										matricula: Number(text.trim()),
 									}))
 								}
 							/>
@@ -176,7 +178,7 @@ export default function RegistroAlumno() {
 								onChangeText={(text) =>
 									setAlumno((prev) => ({
 										...prev,
-										grupo: Number(text),
+										grupo: Number(text.trim()),
 									}))
 								}
 							/>
