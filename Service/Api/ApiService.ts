@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import HttpClient from "../HttpClient";
+import HttpClient from "./HttpClient";
 import { IActions } from "@/Types/Registro";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ToastAndroid } from "react-native";
