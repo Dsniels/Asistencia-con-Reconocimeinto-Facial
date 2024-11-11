@@ -18,18 +18,17 @@ type asistencias = { [group: string]: { [date: string]: string[] } };
 export default function TabTwoScreen() {
 	const [asistencia, setAsistencia] = useState<asistencias>({});
 	const [refresh, setRefresh] = useState<boolean>(false);
-	const groups = Object.keys(asistencia);
+	const groups = Object.keys(asistencia) || [];
 	const [selectedGroup, setSelectedGroup] = useState<string>(groups[0]);
 	const dates = selectedGroup
 		? Object.keys(asistencia[selectedGroup] || {})
 		: [];
 	const [selectedDate, setSelectedDate] = useState<string>(
-		dates[dates.length - 1]
+		dates[dates.length - 1]||""
 	);
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
 	const [selectedName, setSelectedName] = useState<string>("");
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	
 
 	const fetch = async () => {
 		try {
@@ -37,8 +36,8 @@ export default function TabTwoScreen() {
 			if (v) {
 				const data: asistencias = JSON.parse(v);
 				setAsistencia(data);
-			}else{
-				setAsistencia({})
+			} else {
+				setAsistencia({});
 			}
 		} catch (error) {
 			console.error(error);
@@ -52,12 +51,16 @@ export default function TabTwoScreen() {
 	useEffect(() => {
 		if (groups.length > 0) {
 			setSelectedGroup(groups[0]);
+		}else{
+			setSelectedGroup('')
 		}
 	}, [asistencia]);
 
 	useEffect(() => {
 		if (dates.length > 0) {
 			setSelectedDate(dates[dates.length - 1]);
+		}else{
+			setSelectedDate('');
 		}
 	}, [selectedGroup]);
 
@@ -74,7 +77,7 @@ export default function TabTwoScreen() {
 
 	const filteredAsistencia =
 		selectedGroup && selectedDate
-			? { [selectedDate]: asistencia[selectedGroup][selectedDate] || [] }
+				? { [selectedDate]: asistencia[selectedGroup]?.[selectedDate] || [] }
 			: {};
 
 	return (
@@ -88,10 +91,18 @@ export default function TabTwoScreen() {
 				}
 			>
 				<View className="flex-1 m-3 shadow-md shadow-cyan-900  p-5 rounded-3xl">
-					<View className="flex-row justify-between items-center" >
-					<Text className="text-base mr-3 font-semibold">Filtros:</Text>
-					<Pressable className="top-0 right-1 m-2" onPress={()=>setIsModalVisible(true)}><Text className="text-sm text-gray-500" >Eliminar Datos</Text></Pressable>
-
+					<View className="flex-row justify-between items-center">
+						<Text className="text-base mr-3 font-semibold">
+							Filtros:
+						</Text>
+						<Pressable
+							className="top-0 right-1 m-2"
+							onPress={() => setIsModalVisible(true)}
+						>
+							<Text className="text-sm text-gray-500">
+								Eliminar Datos
+							</Text>
+						</Pressable>
 					</View>
 					<View className="items-center content-between justify-center">
 						<View className="flex-row items-center  mb-2">
@@ -181,39 +192,49 @@ export default function TabTwoScreen() {
 			>
 				<ModalScreen
 					setModal={setModalVisible}
-					data={selectedName}
-					grupo={parseInt(selectedGroup)}
+					data={selectedName || ""}
+					grupo={parseInt(selectedGroup) || 1}
 				/>
 			</Modal>
-<Modal
-    animationType="fade"
-    transparent={true}
-    visible={isModalVisible}
-    onRequestClose={() => setIsModalVisible(false)}
->
-    <View style={styles.modalContainer}>
-        <View className="absolute" style={styles.modalContent}>
-            <Text style={styles.modalText}>¿Estás seguro de que deseas eliminar los datos?</Text>
-            <View style={styles.modalButtons}>
-                <Pressable
-                    style={[styles.button, styles.buttonClose]}
-                    onPress={() => setIsModalVisible(false)}
-                >
-                    <Text style={styles.textStyle}>Cancelar</Text>
-                </Pressable>
-                <Pressable
-                    style={[styles.button, styles.buttonDelete]}
-                    onPress={async () => {
-						await AsyncStorage.clear();
-						setIsModalVisible(false)}}
-                >
-                    <Text style={styles.textStyle}>Eliminar</Text>
-                </Pressable>
-            </View>
-        </View>
-    </View>
-</Modal>
-			
+			<Modal
+				animationType="fade"
+				transparent={true}
+				visible={isModalVisible}
+				onRequestClose={() => setIsModalVisible(false)}
+			>
+				<View style={styles.modalContainer}>
+					<View className="absolute" style={styles.modalContent}>
+						<Text style={styles.modalText}>
+							¿Estás seguro de que deseas eliminar los datos?
+						</Text>
+						<View style={styles.modalButtons}>
+							<Pressable
+								style={[styles.button, styles.buttonClose]}
+								onPress={() => setIsModalVisible(false)}
+							>
+								<Text style={styles.textStyle}>Cancelar</Text>
+							</Pressable>
+							<Pressable
+								style={[styles.button, styles.buttonDelete]}
+								onPress={async () => {
+									try {
+										await AsyncStorage.clear();
+									
+										setIsModalVisible(false);
+									} catch (error) {
+										console.error(
+											"Failed to clear AsyncStorage:",
+											error
+										);
+									}
+								}}
+							>
+								<Text style={styles.textStyle}>Eliminar</Text>
+							</Pressable>
+						</View>
+					</View>
+				</View>
+			</Modal>
 		</SafeAreaView>
 	);
 }
@@ -224,59 +245,59 @@ const styles = StyleSheet.create({
 		padding: 20,
 	},
 	modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-        width: 300,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 35,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-    },
-    modalText: {
-        marginBottom: 15,
-        textAlign: 'center',
-    },
-    modalButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-    },
-    button: {
-        borderRadius: 20,
-        padding: 10,
-        elevation: 2,
-    },
-    buttonClose: {
-        backgroundColor: '#2196F3',
-    },
-    buttonDelete: {
-        backgroundColor: '#FF0000',
-    },
-    textStyle: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
+	},
+	modalContent: {
+		width: 300,
+		backgroundColor: "white",
+		borderRadius: 20,
+		padding: 35,
+		alignItems: "center",
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+	},
+	modalText: {
+		marginBottom: 15,
+		textAlign: "center",
+	},
+	modalButtons: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		width: "100%",
+	},
+	button: {
+		borderRadius: 20,
+		padding: 10,
+		elevation: 2,
+	},
+	buttonClose: {
+		backgroundColor: "#2196F3",
+	},
+	buttonDelete: {
+		backgroundColor: "#FF0000",
+	},
+	textStyle: {
+		color: "white",
+		fontWeight: "bold",
+		textAlign: "center",
+	},
 	noDataContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    noDataText: {
-        color: 'gray',
-        fontSize: 12,
-    },
+		justifyContent: "center",
+		alignItems: "center",
+		marginTop: 20,
+	},
+	noDataText: {
+		color: "gray",
+		fontSize: 12,
+	},
 	row: {
 		flexDirection: "row",
 		alignItems: "center",
