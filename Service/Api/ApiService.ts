@@ -4,6 +4,7 @@ import { IActions } from "@/Types/Registro";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ToastAndroid } from "react-native";
 import { StorageService, saveData } from "../StorageService";
+import * as Haptics from "expo-haptics";
 
 export class ApiService implements IActions {
 	private detectedNamesMap: {
@@ -28,12 +29,18 @@ export class ApiService implements IActions {
 						ToastAndroid.LONG,
 						ToastAndroid.CENTER
 					);
+					Haptics.notificationAsync(
+						Haptics.NotificationFeedbackType.Success
+					);
 					resolve();
 				})
 				.catch((e) => {
 					ToastAndroid.show(
 						e.message || "Surgio un Error",
 						ToastAndroid.SHORT
+					);
+					Haptics.notificationAsync(
+						Haptics.NotificationFeedbackType.Error
 					);
 					reject(e);
 				});
@@ -97,13 +104,19 @@ export class ApiService implements IActions {
 						ToastAndroid.LONG,
 						ToastAndroid.CENTER
 					);
-
+					// Haptics.notificationAsync(
+					// 	Haptics.NotificationFeedbackType.Success
+					// );
+					Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid)
 					resolve();
 				})
 				.catch((e) => {
 					ToastAndroid.show(
 						e.message || "Surgio un Error",
 						ToastAndroid.SHORT
+					);
+					Haptics.notificationAsync(
+						Haptics.NotificationFeedbackType.Error
 					);
 					resolve();
 				});
@@ -114,13 +127,21 @@ export class ApiService implements IActions {
 		return new Promise((resolve, reject) => {
 			HttpClient.post("/delete_user", body)
 				.then((response) => {
+					Haptics.notificationAsync(
+						Haptics.NotificationFeedbackType.Success
+					);
 					ToastAndroid.show("Usuario Eliminado", ToastAndroid.LONG);
 				})
+
 				.catch((e) => {
 					ToastAndroid.show(
 						e.message || "Error al Eliminar",
 						ToastAndroid.SHORT
 					);
+					Haptics.notificationAsync(
+						Haptics.NotificationFeedbackType.Error
+					);
+
 					reject(e);
 				});
 		});
@@ -131,6 +152,9 @@ export class ApiService implements IActions {
 			HttpClient.put("/edit", body)
 				.then((response: AxiosResponse) => {
 					ToastAndroid.show("Usuario Editado", ToastAndroid.SHORT);
+					Haptics.notificationAsync(
+						Haptics.NotificationFeedbackType.Success
+					);
 					resolve();
 				})
 				.catch((e) => {
@@ -138,6 +162,10 @@ export class ApiService implements IActions {
 						e.message || "Surgio un Error",
 						ToastAndroid.SHORT
 					);
+					Haptics.notificationAsync(
+						Haptics.NotificationFeedbackType.Error
+					);
+
 					reject(e);
 				});
 		});
