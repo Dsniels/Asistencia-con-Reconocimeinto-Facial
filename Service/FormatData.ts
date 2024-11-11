@@ -3,7 +3,6 @@ import { CameraCapturedPicture } from "expo-camera";
 import { Api, ApiService } from "./Api/ApiService";
 import { ToastAndroid } from "react-native";
 import { saveData, StorageService } from "./StorageService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export class FormatData {
 	private Api: ApiService;
@@ -58,7 +57,6 @@ export class FormatData {
 		let body = new FormData();
 		body.append("currentName", currentName);
 		body.append("newName", newName);
-		//AsyncStorage.clear();
 		this.Api.editarUsuario(body);
 
 	}
@@ -75,7 +73,6 @@ export class FormatData {
 		let filename = imagen.uri.split("/").pop();
 		let match = /\.(\w+)$/.exec(filename as string);
 		let type = match ? `image/${match[1]}` : `image`;
-		//@ts-ignore
 		data.append("file", { uri: imagen.uri, name: "file", type });
 		return data;
 	}
