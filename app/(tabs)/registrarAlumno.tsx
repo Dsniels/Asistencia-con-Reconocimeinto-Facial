@@ -18,7 +18,7 @@ import { Alumno } from "@/Types/Registro";
 import { formatData } from "@/Service/FormatData";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ScreenOrientation from "expo-screen-orientation";
-import { imageActions } from "@/Service/PhotosActions";
+import { imageActions } from "@/Service/PhotoService";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { View } from "@/components/Themed";
 export default function RegistroAlumno() {

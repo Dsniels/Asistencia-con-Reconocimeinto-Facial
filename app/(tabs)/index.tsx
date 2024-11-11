@@ -11,7 +11,7 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { CameraType } from "expo-camera/legacy";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { imageActions } from "@/Service/PhotosActions";
+import { imageActions } from "@/Service/PhotoService";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ScreenOrientation from "expo-screen-orientation";
 export default function TabOneScreen() {
