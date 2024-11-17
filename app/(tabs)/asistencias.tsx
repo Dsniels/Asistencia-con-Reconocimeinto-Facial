@@ -6,6 +6,7 @@ import {
 	ScrollView,
 	StyleSheet,
 	Text,
+	/* comentario en asistencias para comprobar que se hagan cambios en rama Branch*/
 } from "react-native";
 import { View } from "@/components/Themed";
 import { useEffect, useState } from "react";
