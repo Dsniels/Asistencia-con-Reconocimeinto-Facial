@@ -1,13 +1,10 @@
-import { StatusBar } from "expo-status-bar";
 import {
-	Button,
-	Platform,
+
 	Pressable,
 	StyleSheet,
 	TextInput,
 	ToastAndroid,
 	Text,
-	ScrollView,
 	KeyboardAvoidingView,
 	TouchableWithoutFeedback,
 	Keyboard,
