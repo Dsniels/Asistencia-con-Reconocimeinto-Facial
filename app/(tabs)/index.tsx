@@ -5,18 +5,21 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	View,
-	Text
+	Text,
 } from "react-native";
-import { CameraView, useCameraPermissions } from "expo-camera";
-import { CameraType } from "expo-camera/legacy";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { LegacyRef, useCallback, useEffect, useRef, useState } from "react";
 import { imageActions } from "@/Service/PhotoService";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { useNavigation } from "@react-navigation/native";
+import CameraComponent from "../Camera";
 export default function TabOneScreen() {
+	const navigation = useNavigation();
+	
 	const [permission, requestPermission] = useCameraPermissions();
-	const cameraRef = useRef<CameraView | null>(null);
+	const [cameraRef, setCameraRef] = useState<CameraView | null>(null);
 	const [isCameraVisible, setIsCameraVisible] = useState(false);
 	const [orientation, setOrientation] = useState(
 		ScreenOrientation.Orientation.PORTRAIT_UP
@@ -35,9 +38,22 @@ export default function TabOneScreen() {
 			ScreenOrientation.removeOrientationChangeListener(subscription);
 		};
 	}, [orientation]);
+ useEffect(() => {
+  const unsubscribe = navigation.addListener('blur', () => {
+    // Do something when the screen blurs
+	console.log("blur")
+	setIsCameraVisible(false);
+				setCameraRef(null);
+  });
 
+  return unsubscribe;
+}, [navigation.isFocused()]);
+	useEffect(()=>{
+		console.log("jjjj")
+	},[navigation.isFocused()])
 	useFocusEffect(
 		useCallback(() => {
+			console.log("Pantalla index enfocada");
 			if (!permission) {
 				requestPermission();
 			} else if (permission.granted) {
@@ -54,42 +70,42 @@ export default function TabOneScreen() {
 		return <View />;
 	}
 
-
 	return (
 		<SafeAreaView className="flex-1 mb-8 items-center justify-center ">
 			{isCameraVisible && (
-				<CameraView
-					className="flex-1 h-max  justify-center align-middle content-center items-center"
-					ref={cameraRef}
-					facing={CameraType.back}
-					style={styles.camera}
+				<CameraComponent
+				
+				isCameraVisible={isCameraVisible}
+					setCameraRef={setCameraRef}
 				>
-						<View className="flex-1 justify-end items-center m-9 ">
-							<TouchableOpacity
-								className="flex bg-white content-center justify-center align-middle items-center rounded-full h-20 w-20 text-white"
-								onPress={() =>
-									imageActions.takePhotoAndSend(
-										cameraRef.current as CameraView,
-										setImage,
-										orientation
-									)
-								}
-							>
-								<MaterialCommunityIcons
-									name="camera-iris"
-									size={48}
+					<View className="flex-1 justify-end items-center m-9 ">
+						<TouchableOpacity
+							className="flex bg-white content-center justify-center align-middle items-center rounded-full h-20 w-20 text-white"
+							onPress={() => {
+								console.log("Tomando foto en index");
+
+								imageActions.takePhotoAndSend(
+									cameraRef as CameraView,
+									setImage,
+									orientation
+								);
+							}}
+						>
+							<MaterialCommunityIcons
+								name="camera-iris"
+								size={48}
+							/>
+						</TouchableOpacity>
+						{image.imagen && (
+							<View className="absolute bottom-2 left-80 rounded-xl p-4">
+								<Image
+									source={{ uri: image?.imagen?.uri }}
+									style={{ width: 50, height: 50 }}
 								/>
-							</TouchableOpacity>
-							{image.imagen && (
-									<View className="absolute bottom-2 left-80 rounded-xl p-4">
-										<Image
-											source={{ uri: image?.imagen?.uri }}
-											style={{ width: 50, height: 50 }}
-										/>
-									</View>
-								)}
-						</View>
-				</CameraView>
+							</View>
+						)}
+					</View>
+				</CameraComponent>
 			)}
 		</SafeAreaView>
 	);

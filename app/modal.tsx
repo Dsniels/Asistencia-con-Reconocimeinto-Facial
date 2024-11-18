@@ -171,7 +171,19 @@ export default function ModalScreen({
 					>
 						<EvilIcons name="trash" size={26} color="white" />
 						<Text className="text-white text-sm ml-2">
-							Eliminar
+							Descartar Asistencia
+						</Text>
+					</Pressable><Pressable
+						onPress={() => {
+							formatData.prepareForDelete(curName, true)
+								 setModal(false);
+						}}
+						className="flex-row rounded-xl shadow p-2 m-3 color-white items-center justify-center bg-red-600"
+						style={{ flex: 1 }}
+					>
+						<EvilIcons name="trash" size={26} color="white" />
+						<Text className="text-white text-sm ml-2">
+							Eliminar Alumno 
 						</Text>
 					</Pressable>
 				</View>

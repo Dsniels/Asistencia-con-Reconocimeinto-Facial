@@ -1,4 +1,3 @@
-import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
 import { Pressable, SafeAreaView, View } from "react-native";
@@ -38,10 +37,14 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="index"
 				options={{
+					
 					title:"Reconocimiento",
 					tabBarIcon:({ color }) => (
 						<TabBarIcon name="camera" color={color} />
 					),
+					popToTopOnBlur:true,
+					freezeOnBlur : false,
+					
 				}}
 			/>
 			<Tabs.Screen
@@ -60,6 +63,9 @@ export default function TabLayout() {
 					tabBarIcon: ({ color }) => (
 						<TabBarIcon name="user-plus" color={color} />
 					),
+					freezeOnBlur : false,
+					popToTopOnBlur:true,
+
 				}}
 			/>
 		</Tabs>

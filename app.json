@@ -1,5 +1,6 @@
 {
   "expo": {
+    "newArchEnabled":true, 
     "name": "my-app",
     "slug": "my-app",
     "version": "1.0.0",
@@ -28,13 +29,25 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "expo-asset",
+        {
+          "assets": [
+            "./assets/images/Avatar.png",
+            "./assets/images/FingerPrint.png",
+            "./assets/images/FingerPrintLogin.png"
+          ]
+        }
+      ],
       "expo-router",
       [
         "expo-screen-orientation",
         {
           "initialOrientation": "DEFAULT"
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true

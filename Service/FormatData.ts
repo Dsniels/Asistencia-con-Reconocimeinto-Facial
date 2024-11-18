@@ -23,7 +23,7 @@ export class FormatData {
 		const valueFiltrados = value.filter(
 			(value) => typeof value === "string"
 		);
-		const cleanedValues = valueFiltrados.map(v=>v.trim())
+		const cleanedValues = valueFiltrados.map((v) => v.trim());
 		const nombre = `${usuario.grupo} ${cleanedValues
 			.join(" ")
 			.toUpperCase()} ${usuario.matricula}`;
@@ -52,20 +52,26 @@ export class FormatData {
 	}
 
 	editar(currentName: string, newName: string) {
-		queueMicrotask(() => {this.Store.editUser(currentName, newName)});
+		queueMicrotask(() => {
+			this.Store.editUser(currentName, newName);
+		});
 
 		let body = new FormData();
 		body.append("currentName", currentName);
 		body.append("newName", newName);
 		this.Api.editarUsuario(body);
-
 	}
 
-	async prepareForDelete(name:string){
+	async prepareForDelete(name: string, deleteDefinitely = false) {
 		let body = new FormData();
 		body.append("nombre", name);
-		queueMicrotask(()=>{this.Store.deleteUser(name)});
-		await this.Api.deleteUser(body);
+		queueMicrotask(() => {
+			this.Store.deleteUser(name);
+		});
+
+		if (deleteDefinitely) {
+			await this.Api.deleteUser(body);
+		}
 	}
 
 	private prepareData(imagen: CameraCapturedPicture): FormData {

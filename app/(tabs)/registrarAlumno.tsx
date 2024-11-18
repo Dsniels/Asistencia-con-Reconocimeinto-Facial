@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
 	Modal,
 	StyleSheet,
@@ -13,7 +13,6 @@ import {
 	ScrollView,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Camera, CameraView } from "expo-camera";
 import { Alumno } from "@/Types/Registro";
 import { formatData } from "@/Service/FormatData";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -21,6 +20,10 @@ import * as ScreenOrientation from "expo-screen-orientation";
 import { imageActions } from "@/Service/PhotoService";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { View } from "@/components/Themed";
+import { useFocusEffect } from "@react-navigation/native";
+import { Camera, CameraView } from "expo-camera";
+import CameraComponent from "../Camera";
+
 export default function RegistroAlumno() {
 	const [alumno, setAlumno] = useState<Alumno>({
 		nombre: "".trim(),
@@ -42,7 +45,7 @@ export default function RegistroAlumno() {
 
 		requestCameraPermissions();
 	}, []);
-
+ 
 	const openCamera = () => {
 		if (hasPermission) {
 			setIsCameraOpen(true);
@@ -66,6 +69,16 @@ export default function RegistroAlumno() {
 			ScreenOrientation.removeOrientationChangeListener(subscription);
 		};
 	}, [orientation]);
+
+	useFocusEffect(
+		useCallback(() => {
+			console.log("Pantalla registrarAlumno enfocada");
+			return () => {
+				console.log("Pantalla registrarAlumno desenfocada");
+				setCameraRef(null);
+			};
+		}, [])
+	);
 
 	const takePicture = async () => {
 		try {
@@ -238,10 +251,9 @@ export default function RegistroAlumno() {
 					animationType="slide"
 					transparent={false}
 				>
-					<CameraView
-						mute={true}
-						style={styles.camera}
-						ref={(ref) => setCameraRef(ref)}
+					<CameraComponent
+					isCameraVisible={isCameraOpen}
+					setCameraRef={setCameraRef}
 					>
 						<View className="bg-transparent"  style={styles.cameraButtonContainer}>
 							<Pressable className="bg-white rounded-full" onPress={takePicture}>
@@ -259,7 +271,7 @@ export default function RegistroAlumno() {
 								/>
 							</Pressable>
 						</View>
-					</CameraView>
+					</CameraComponent>
 				</Modal>
 			</ScrollView>
 		</SafeAreaView>
