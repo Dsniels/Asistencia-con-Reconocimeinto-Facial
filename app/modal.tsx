@@ -20,6 +20,7 @@ import { formatData } from "@/Service/FormatData";
 import {
 	AntDesign,
 	EvilIcons,
+	FontAwesome,
 	MaterialIcons,
 } from "@expo/vector-icons";
 
@@ -169,7 +170,7 @@ export default function ModalScreen({
 						className="flex-row rounded-xl shadow p-2 m-3 color-white items-center justify-center bg-red-600"
 						style={{ flex: 1 }}
 					>
-						<EvilIcons name="trash" size={26} color="white" />
+						<FontAwesome name="remove" size={24} color="black" />
 						<Text className="text-white text-sm ml-2">
 							Descartar Asistencia
 						</Text>
