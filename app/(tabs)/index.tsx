@@ -40,8 +40,7 @@ export default function TabOneScreen() {
 	}, [orientation]);
  useEffect(() => {
   const unsubscribe = navigation.addListener('blur', () => {
-    // Do something when the screen blurs
-	console.log("blur")
+   
 	setIsCameraVisible(false);
 				setCameraRef(null);
   });
@@ -49,11 +48,9 @@ export default function TabOneScreen() {
   return unsubscribe;
 }, [navigation.isFocused()]);
 	useEffect(()=>{
-		console.log("jjjj")
 	},[navigation.isFocused()])
 	useFocusEffect(
 		useCallback(() => {
-			console.log("Pantalla index enfocada");
 			if (!permission) {
 				requestPermission();
 			} else if (permission.granted) {
@@ -82,8 +79,6 @@ export default function TabOneScreen() {
 						<TouchableOpacity
 							className="flex bg-white content-center justify-center align-middle items-center rounded-full h-20 w-20 text-white"
 							onPress={() => {
-								console.log("Tomando foto en index");
-
 								imageActions.takePhotoAndSend(
 									cameraRef as CameraView,
 									setImage,

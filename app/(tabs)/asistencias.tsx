@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import ModalScreen from "../modal";
+import { saveData, StorageService } from "@/Service/StorageService";
 
 type asistencias = { [group: string]: { [date: string]: string[] } };
 
@@ -24,7 +25,7 @@ export default function TabTwoScreen() {
 		? Object.keys(asistencia[selectedGroup] || {})
 		: [];
 	const [selectedDate, setSelectedDate] = useState<string>(
-		dates[dates.length - 1]||""
+		dates[dates.length - 1] || ""
 	);
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
 	const [selectedName, setSelectedName] = useState<string>("");
@@ -51,16 +52,16 @@ export default function TabTwoScreen() {
 	useEffect(() => {
 		if (groups.length > 0) {
 			setSelectedGroup(groups[0]);
-		}else{
-			setSelectedGroup('')
+		} else {
+			setSelectedGroup("");
 		}
 	}, [asistencia]);
 
 	useEffect(() => {
 		if (dates.length > 0) {
 			setSelectedDate(dates[dates.length - 1]);
-		}else{
-			setSelectedDate('');
+		} else {
+			setSelectedDate("");
 		}
 	}, [selectedGroup]);
 
@@ -77,7 +78,10 @@ export default function TabTwoScreen() {
 
 	const filteredAsistencia =
 		selectedGroup && selectedDate
-				? { [selectedDate]: asistencia[selectedGroup]?.[selectedDate] || [] }
+			? {
+					[selectedDate]:
+						asistencia[selectedGroup]?.[selectedDate] || [],
+			  }
 			: {};
 
 	return (
@@ -156,7 +160,19 @@ export default function TabTwoScreen() {
 					</View>
 				</View>
 				<View className="flex-1 p-5 m-3 mt-4 mb-9  shadow-xl shadow-cyan-900 min-h-32 rounded-3xl">
-					<Text className="text-base font-semibold">Alumnos:</Text>
+					<View className="flex-row justify-between items-center">
+						<Text className="text-base font-semibold">
+							Alumnos:
+						</Text>
+						<Pressable
+							className="top-0 right-1 m-2"
+							onPress={() => saveData.saveAttendanceCVS()}
+						>
+							<Text className="text-sm text-gray-500">
+								Save CVS
+							</Text>
+						</Pressable>
+					</View>
 					{asistencia &&
 					Object.keys(filteredAsistencia).length > 0 ? (
 						Object.entries(filteredAsistencia).map(
@@ -219,7 +235,7 @@ export default function TabTwoScreen() {
 								onPress={async () => {
 									try {
 										await AsyncStorage.clear();
-									
+
 										setIsModalVisible(false);
 									} catch (error) {
 										console.error(

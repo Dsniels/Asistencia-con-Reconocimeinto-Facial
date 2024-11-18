@@ -72,9 +72,7 @@ export default function RegistroAlumno() {
 
 	useFocusEffect(
 		useCallback(() => {
-			console.log("Pantalla registrarAlumno enfocada");
 			return () => {
-				console.log("Pantalla registrarAlumno desenfocada");
 				setCameraRef(null);
 			};
 		}, [])
