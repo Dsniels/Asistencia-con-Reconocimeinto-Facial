@@ -1,12 +1,12 @@
 {
   "expo": {
-    "newArchEnabled":true, 
+    "newArchEnabled":false, 
     "name": "Listance",
-    "slug": "my-app",
+    "slug": "Listance",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "Listance",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.danielsrd.myapp"
+      "package": "com.danielsrd.Listance"
     },
     "web": {
       "bundler": "metro",

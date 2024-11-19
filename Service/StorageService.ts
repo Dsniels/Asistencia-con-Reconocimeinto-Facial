@@ -1,8 +1,11 @@
 import { asistencias } from "@/Types/Registro";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { documentDirectory, EncodingType, writeAsStringAsync } from "expo-file-system";
+import {
+	documentDirectory,
+	EncodingType,
+	writeAsStringAsync,
+} from "expo-file-system";
 import { Directory, File, Paths } from "expo-file-system/next";
-import { store } from "expo-router/build/global-state/router-store";
 import { ToastAndroid } from "react-native";
 
 export class StorageService {
@@ -111,7 +114,8 @@ export class StorageService {
 
 	public async saveAttendanceCVS() {
 		try {
-			const storeObj = (await AsyncStorage.getItem("Users2")) || "";
+			const storeObj = await AsyncStorage.getItem("Users2");
+			if (!storeObj) throw new Error("No hay datos para guardar");
 			const data: asistencias = JSON.parse(storeObj);
 			console.log(data);
 			const fields = ["grupo", "date", "attendance"];
@@ -134,20 +138,24 @@ export class StorageService {
 				csv += `${row.grupo},${row.fecha},${row.nombre}\n`;
 			});
 
-			const fileUri =documentDirectory + "attendance.csv";
-			console.log(fileUri)
+			const fileUri = documentDirectory + "attendance.csv";
+			console.log(fileUri);
 			const destination = new File(fileUri);
 
 			console.log("nnnr");
 			destination.create();
-			console.log(destination.uri)
+			console.log(destination.uri);
 
 			await writeAsStringAsync(fileUri, csv, {
 				encoding: EncodingType.UTF8,
 			});
 			console.log("Archivo CSV guardado correctamente en:", fileUri);
-		} catch (error) {
-			console.error("Error al guardar el archivo CSV:", error);
+		} catch (e) {
+			ToastAndroid.show(
+				e.message || "Error al Eliminar",
+				ToastAndroid.SHORT
+			);
+
 		}
 	}
 }

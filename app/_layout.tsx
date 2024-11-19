@@ -53,8 +53,8 @@ export default function RootLayout() {
 		}
 	};
 	const [assets, errorAssets] = useAssets([
-		require("../assets/images/FingerPrint.png"),
-		require("../assets/images/FingerPrintLogin.png"),
+		require("../assets/images/fingerprint.png"),
+		require("../assets/images/fingerprintlogin.png"),
 	]);
 
 	useEffect(() => {

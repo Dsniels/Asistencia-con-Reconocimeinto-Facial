@@ -15,7 +15,7 @@ import {
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Alumno } from "@/Types/Registro";
 import { formatData } from "@/Service/FormatData";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { imageActions } from "@/Service/PhotoService";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -121,7 +121,7 @@ export default function RegistroAlumno() {
 								? {
 										uri: alumno.imagen.uri,
 								  }
-								: require("../../assets/images/Avatar.png")
+								: require("../../assets/images/avatar.png")
 						}
 						style={styles.image}
 					/>
