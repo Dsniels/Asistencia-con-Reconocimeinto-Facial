@@ -1,5 +1,6 @@
 {
   "expo": {
+    "entryPoint": "./app/_layout.tsx",
     "newArchEnabled":false, 
     "name": "Listance",
     "slug": "Listance",
