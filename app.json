@@ -1,7 +1,7 @@
 {
   "expo": {
     "entryPoint": "./app/_layout.tsx",
-    "newArchEnabled":false, 
+    "newArchEnabled": false,
     "name": "Listance",
     "slug": "Listance",
     "version": "1.0.0",
@@ -47,7 +47,8 @@
           "initialOrientation": "DEFAULT"
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { View } from "@/components/Themed";
 import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from "expo-sqlite/kv-store";
 import { Picker } from "@react-native-picker/picker";
 import ModalScreen from "../modal";
 import { saveData, StorageService } from "@/Service/StorageService";

@@ -1,5 +1,5 @@
 import { asistencias } from "@/Types/Registro";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from "expo-sqlite/kv-store";
 import {
 	documentDirectory,
 	EncodingType,

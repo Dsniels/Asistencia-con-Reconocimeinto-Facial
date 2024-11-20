@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import HttpClient from "./HttpClient";
 import { IActions } from "@/Types/Registro";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from "expo-sqlite/kv-store";
 import { ToastAndroid } from "react-native";
 import { StorageService, saveData } from "../StorageService";
 import * as Haptics from "expo-haptics";
