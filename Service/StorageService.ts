@@ -162,7 +162,7 @@ export class StorageService {
 					.catch(e => console.log(e));
 				} 
 			} 	
-			w
+			
 		} catch (e) {
 			ToastAndroid.show(
 				e.message || "Error al Eliminar",
