@@ -3,6 +3,9 @@ import AsyncStorage from "expo-sqlite/kv-store";
 import {
 	documentDirectory,
 	EncodingType,
+	makeDirectoryAsync,
+	readAsStringAsync,
+	StorageAccessFramework,
 	writeAsStringAsync,
 } from "expo-file-system";
 import { Directory, File, Paths } from "expo-file-system/next";
@@ -137,17 +140,29 @@ export class StorageService {
 				csv += `${row.grupo},${row.fecha},${row.nombre}\n`;
 			});
 
-			const fileUri = documentDirectory + "attendance.csv";
+			const fileUri = documentDirectory + "Download/attendance.csv";
+			await makeDirectoryAsync(fileUri, { intermediates: true });
 			ToastAndroid.show(fileUri, ToastAndroid.LONG);
 			const destination = new File(fileUri);
 
 			destination.create();
 
 			ToastAndroid.show(destination.uri, ToastAndroid.LONG);
-			writeAsStringAsync(fileUri, csv, {
-				encoding: EncodingType.UTF8,
-			}).catch(e => {throw new Error(e)})
-			console.log("Archivo CSV guardado correctamente en:", fileUri);
+
+
+			const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
+
+				if (permissions.granted) {
+
+				await StorageAccessFramework.createFileAsync(permissions.directoryUri, 'attendance.csv', 'text/csv')
+					.then(async (uri) => {
+						ToastAndroid.show(uri, ToastAndroid.LONG);
+					await writeAsStringAsync(uri, csv, { encoding: EncodingType.Base64 });
+					})
+					.catch(e => console.log(e));
+				} 
+			} 	
+			w
 		} catch (e) {
 			ToastAndroid.show(
 				e.message || "Error al Eliminar",
