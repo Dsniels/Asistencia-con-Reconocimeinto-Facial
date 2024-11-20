@@ -6,6 +6,7 @@ import {
 	ScrollView,
 	StyleSheet,
 	Text,
+	ToastAndroid,
 } from "react-native";
 import { View } from "@/components/Themed";
 import { useEffect, useState } from "react";
@@ -166,7 +167,10 @@ export default function TabTwoScreen() {
 						</Text>
 						<Pressable
 							className="top-0 right-1 m-2"
-							onPress={() => saveData.saveAttendanceCVS()}
+							onPress={() => {
+								ToastAndroid.show("guardando csv...", ToastAndroid.SHORT);
+								saveData.saveAttendanceCVS();
+							}}
 						>
 							<Text className="text-sm text-gray-500">
 								Save CVS

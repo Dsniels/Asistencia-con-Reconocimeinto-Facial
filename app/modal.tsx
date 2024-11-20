@@ -1,13 +1,9 @@
-import { StatusBar } from "expo-status-bar";
 import {
-	Button,
-	Platform,
 	Pressable,
 	StyleSheet,
 	TextInput,
 	ToastAndroid,
 	Text,
-	ScrollView,
 	KeyboardAvoidingView,
 	TouchableWithoutFeedback,
 	Keyboard,
@@ -20,7 +16,6 @@ import { formatData } from "@/Service/FormatData";
 import {
 	AntDesign,
 	EvilIcons,
-	FontAwesome,
 	MaterialIcons,
 } from "@expo/vector-icons";
 

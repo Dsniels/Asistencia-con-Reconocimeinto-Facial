@@ -117,7 +117,6 @@ export class StorageService {
 			const storeObj = await AsyncStorage.getItem("Users2");
 			if (!storeObj) throw new Error("No hay datos para guardar");
 			const data: asistencias = JSON.parse(storeObj);
-			console.log(data);
 			const fields = ["grupo", "date", "attendance"];
 			const newData: any = [];
 
@@ -139,21 +138,20 @@ export class StorageService {
 			});
 
 			const fileUri = documentDirectory + "attendance.csv";
-			console.log(fileUri);
+			ToastAndroid.show(fileUri, ToastAndroid.LONG);
 			const destination = new File(fileUri);
 
-			console.log("nnnr");
 			destination.create();
-			console.log(destination.uri);
 
-			await writeAsStringAsync(fileUri, csv, {
+			ToastAndroid.show(destination.uri, ToastAndroid.LONG);
+			writeAsStringAsync(fileUri, csv, {
 				encoding: EncodingType.UTF8,
-			});
+			}).catch(e => {throw new Error(e)})
 			console.log("Archivo CSV guardado correctamente en:", fileUri);
 		} catch (e) {
 			ToastAndroid.show(
 				e.message || "Error al Eliminar",
-				ToastAndroid.SHORT
+				ToastAndroid.LONG
 			);
 
 		}
