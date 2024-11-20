@@ -136,41 +136,44 @@ export class StorageService {
 			}
 
 			let csv = fields.join(",") + "\n";
-			newData.forEach((row) => {
+			newData.forEach((row: any) => {
 				csv += `${row.grupo},${row.fecha},${row.nombre}\n`;
 			});
 
-			const fileUri = documentDirectory + "Download/attendance.csv";
-			await makeDirectoryAsync(fileUri, { intermediates: true });
-			ToastAndroid.show(fileUri, ToastAndroid.LONG);
-			const destination = new File(fileUri);
+			const permissions =
+				await StorageAccessFramework.requestDirectoryPermissionsAsync();
 
-			destination.create();
-
-			ToastAndroid.show(destination.uri, ToastAndroid.LONG);
-
-
-			const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
-
-				if (permissions.granted) {
-
-				await StorageAccessFramework.createFileAsync(permissions.directoryUri, 'attendance.csv', 'text/csv')
+			if (permissions.granted) {
+				await StorageAccessFramework.createFileAsync(
+					permissions.directoryUri,
+					"attendance.csv",
+					"text/csv"
+				)
 					.then(async (uri) => {
 						ToastAndroid.show(uri, ToastAndroid.LONG);
-					await writeAsStringAsync(uri, csv, { encoding: EncodingType.Base64 });
+						writeAsStringAsync(uri, csv, {
+							encoding: EncodingType.Base64,
+						})
+							.then(() =>
+								ToastAndroid.show(
+									"Archivo guardado",
+									ToastAndroid.CENTER
+								)
+							)
+							.catch((e) => {
+								throw new Error(e);
+							});
 					})
-					.catch(e => console.log(e));
-				} 
-			} 	
-			
-		} catch (e) {
+					.catch((e) => console.log(e));
+			} else {
+				throw new Error("Permisos de almacenamiento denegado");
+			}
+		} catch (e: any) {
 			ToastAndroid.show(
-				e.message || "Error al Eliminar",
+				e.message || "Error al guardar archivo",
 				ToastAndroid.LONG
 			);
-
 		}
 	}
 }
-
 export const saveData = new StorageService();
