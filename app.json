@@ -6,7 +6,7 @@
     "slug": "Listance",
     "version": "1.0.0",
     "orientation": "default",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/adaptive-icon.png",
     "scheme": "Listance",
     "userInterfaceStyle": "automatic",
     "splash": {

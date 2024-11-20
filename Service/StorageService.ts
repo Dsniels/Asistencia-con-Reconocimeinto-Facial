@@ -120,7 +120,7 @@ export class StorageService {
 			const storeObj = await AsyncStorage.getItem("Users2");
 			if (!storeObj) throw new Error("No hay datos para guardar");
 			const data: asistencias = JSON.parse(storeObj);
-			const fields = ["grupo", "date", "attendance"];
+			const fields = ["grupo", "date", "Alumno"];
 			const newData: any = [];
 
 			for (const [grupo, asistencia] of Object.entries(data)) {
@@ -143,6 +143,7 @@ export class StorageService {
 			const permissions =
 				await StorageAccessFramework.requestDirectoryPermissionsAsync();
 
+				console.log(csv)
 			if (permissions.granted) {
 				await StorageAccessFramework.createFileAsync(
 					permissions.directoryUri,
@@ -151,9 +152,7 @@ export class StorageService {
 				)
 					.then(async (uri) => {
 						ToastAndroid.show(uri, ToastAndroid.LONG);
-						writeAsStringAsync(uri, csv, {
-							encoding: EncodingType.Base64,
-						})
+						writeAsStringAsync(uri, csv)
 							.then(() =>
 								ToastAndroid.show(
 									"Archivo guardado",

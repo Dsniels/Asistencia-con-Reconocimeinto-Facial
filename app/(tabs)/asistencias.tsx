@@ -173,7 +173,7 @@ export default function TabTwoScreen() {
 							}}
 						>
 							<Text className="text-sm text-gray-500">
-								Save CVS
+								Exportar
 							</Text>
 						</Pressable>
 					</View>
