@@ -166,7 +166,7 @@ export default function RegistroAlumno() {
 						/>
 					</View>
 					<View className="flex-row justify-stretch">
-						<View className="m-2 w-20 ">
+						<View className="m-2 w-auto ">
 							<Text className="text-xs m-1">Matricula</Text>
 							<TextInput
 								className="border p-2 border-gray-500 rounded-md text-black"

@@ -1,14 +1,9 @@
 import { asistencias } from "@/Types/Registro";
 import AsyncStorage from "expo-sqlite/kv-store";
 import {
-	documentDirectory,
-	EncodingType,
-	makeDirectoryAsync,
-	readAsStringAsync,
 	StorageAccessFramework,
 	writeAsStringAsync,
 } from "expo-file-system";
-import { Directory, File, Paths } from "expo-file-system/next";
 import { ToastAndroid } from "react-native";
 
 export class StorageService {
@@ -120,7 +115,7 @@ export class StorageService {
 			const storeObj = await AsyncStorage.getItem("Users2");
 			if (!storeObj) throw new Error("No hay datos para guardar");
 			const data: asistencias = JSON.parse(storeObj);
-			const fields = ["grupo", "date", "Alumno"];
+			const fields = ["Grupo", "Fecha", "Alumno"];
 			const newData: any = [];
 
 			for (const [grupo, asistencia] of Object.entries(data)) {
@@ -143,15 +138,13 @@ export class StorageService {
 			const permissions =
 				await StorageAccessFramework.requestDirectoryPermissionsAsync();
 
-				console.log(csv)
 			if (permissions.granted) {
 				await StorageAccessFramework.createFileAsync(
 					permissions.directoryUri,
-					"attendance.csv",
+					"Lista_Asistencias.csv",
 					"text/csv"
 				)
 					.then(async (uri) => {
-						ToastAndroid.show(uri, ToastAndroid.LONG);
 						writeAsStringAsync(uri, csv)
 							.then(() =>
 								ToastAndroid.show(

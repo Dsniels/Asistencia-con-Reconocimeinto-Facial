@@ -38,7 +38,7 @@ export class FormatData {
 			);
 			formData.append("nombre", nombre);
 			ToastAndroid.showWithGravity(
-				"Registrando Alumno",
+				"Registrando alumno, te avisaremos cuando este listo!",
 				ToastAndroid.LONG,
 				ToastAndroid.CENTER
 			);

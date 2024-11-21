@@ -168,7 +168,7 @@ export default function TabTwoScreen() {
 						<Pressable
 							className="top-0 right-1 m-2"
 							onPress={() => {
-								ToastAndroid.show("guardando csv...", ToastAndroid.SHORT);
+								// ToastAndroid.show("guardando csv...", ToastAndroid.SHORT);
 								saveData.saveAttendanceCVS();
 							}}
 						>

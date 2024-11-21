@@ -7,6 +7,7 @@ import {
 	KeyboardAvoidingView,
 	TouchableWithoutFeedback,
 	Keyboard,
+	Modal,
 } from "react-native";
 
 import { View } from "@/components/Themed";
@@ -28,6 +29,7 @@ export default function ModalScreen({
 	data: string;
 	grupo: number;
 }) {
+	const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 	const [userName, setUserName] = useState<string>("");
 	const [curName, setCurName] = useState<string>("");
 	const [alumno, setAlumno] = useState<Alumno>({
@@ -82,6 +84,7 @@ export default function ModalScreen({
 			style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
 		>
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+				<>
 				<View style={styles.modalContainer}>
 					<View className="flex-1 bg-opacity-50  bg-slate-400 h-4/6 m-6 w-max p-5  rounded-2xl shadow-lg shadow-slate-300 justify-center items-center">
 						<Pressable
@@ -145,7 +148,7 @@ export default function ModalScreen({
 							/>
 						</View>
 						<View className="flex-row justify-stretch">
-							<View className="m-2 w-20 ">
+							<View className="m-2 w-auto ">
 								<Text className="text-xs m-1">Matricula</Text>
 								<TextInput
 									className="border p-2 border-gray-500 rounded-md text-black"
@@ -180,8 +183,7 @@ export default function ModalScreen({
 						<View className="flex-row items-center justify-stretch content-center">
 							<Pressable
 								onPress={() => {
-									formatData.prepareForDelete(curName, true);
-									setModal(false);
+									setIsModalVisible(true);
 								}}
 								className="flex-row rounded-xl shadow p-2 m-3 color-white items-center justify-center bg-red-600"
 								style={{ flex: 1 }}
@@ -210,7 +212,45 @@ export default function ModalScreen({
 							</Pressable>
 						</View>
 					</View>
+				</View><Modal
+				animationType="fade"
+				transparent={true}
+				visible={isModalVisible}
+				onRequestClose={() => setIsModalVisible(false)}
+			>
+				<View style={styles.modalContainer}>
+					<View className="absolute" style={styles.modalContent}>
+						<Text style={styles.modalText}>
+							¿Estás seguro de que deseas eliminar el registro de este alumno?
+						</Text>
+						<View style={styles.modalButtons}>
+							<Pressable
+								style={[styles.button, styles.buttonClose]}
+								onPress={() => setIsModalVisible(false)}
+							>
+								<Text style={styles.textStyle}>Cancelar</Text>
+							</Pressable>
+							<Pressable
+								style={[styles.button, styles.buttonDelete]}
+								onPress={async () => {
+									try {
+
+									formatData.prepareForDelete(curName, true);
+
+										setModal(false)
+										setIsModalVisible(false);
+									} catch (error) {
+										ToastAndroid.show("Surgio un error al eliminar", ToastAndroid.SHORT);
+									}
+								}}
+							>
+								<Text style={styles.textStyle}>Eliminar</Text>
+							</Pressable>
+						</View>
+					</View>
 				</View>
+			</Modal>
+			</>
 			</TouchableWithoutFeedback>
 		</KeyboardAvoidingView>
 	);
@@ -236,5 +276,81 @@ const styles = StyleSheet.create({
 		marginVertical: 25,
 		height: 1,
 		width: "80%",
+	},
+
+	modalContent: {
+		width: 300,
+		backgroundColor: "white",
+		borderRadius: 20,
+		padding: 35,
+		alignItems: "center",
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+	},
+	modalText: {
+		marginBottom: 15,
+		textAlign: "center",
+	},
+	modalButtons: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		width: "100%",
+	},
+	button: {
+		borderRadius: 20,
+		padding: 10,
+		elevation: 2,
+	},
+	buttonClose: {
+		backgroundColor: "#2196F3",
+	},
+	buttonDelete: {
+		backgroundColor: "#FF0000",
+	},
+	textStyle: {
+		color: "white",
+		fontWeight: "bold",
+		textAlign: "center",
+	},
+	noDataContainer: {
+		justifyContent: "center",
+		alignItems: "center",
+		marginTop: 20,
+	},
+	noDataText: {
+		color: "gray",
+		fontSize: 12,
+	},
+	row: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginBottom: 20,
+	},
+	label: {
+		color: "black",
+		marginRight: 10,
+	},
+	picker: {
+		color: "black",
+		width: 200,
+	},
+	dateContainer: {
+		marginBottom: 20,
+		padding: 10,
+		borderRadius: 10,
+	},
+	dateText: {
+		fontSize: 18,
+		fontWeight: "bold",
+		marginBottom: 10,
+	},
+	nameText: {
+		fontSize: 16,
+		marginLeft: 10,
 	},
 });

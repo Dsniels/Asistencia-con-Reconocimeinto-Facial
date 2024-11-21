@@ -29,7 +29,6 @@ class ImageActions {
 				return photo as CameraCapturedPicture;
 			}
 		} catch (e: any) {
-			console.error('ERROR EN METODO TAKE',e);
 			ToastAndroid.show(
 				e.message || "Surgio un Error",
 				ToastAndroid.SHORT
