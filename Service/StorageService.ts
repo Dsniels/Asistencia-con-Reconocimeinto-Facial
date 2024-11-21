@@ -6,6 +6,14 @@ import {
 } from "expo-file-system";
 import { ToastAndroid } from "react-native";
 
+
+type CsvFile ={
+	grupo:string,
+	fecha : string,
+	matricula:string,
+	nombre : string
+}
+
 export class StorageService {
 	public async editUser(currentName: string, newName: string) {
 		try {
@@ -112,27 +120,30 @@ export class StorageService {
 
 	public async saveAttendanceCVS() {
 		try {
+			console.log()
 			const storeObj = await AsyncStorage.getItem("Users2");
 			if (!storeObj) throw new Error("No hay datos para guardar");
 			const data: asistencias = JSON.parse(storeObj);
-			const fields = ["Grupo", "Fecha", "Alumno"];
-			const newData: any = [];
+			const fields = ["Grupo", "Fecha","Matricula", "Alumno"];
+			const newData: CsvFile[] = [];
 
 			for (const [grupo, asistencia] of Object.entries(data)) {
 				for (const [fecha, nombre] of Object.entries(asistencia)) {
 					nombre.forEach((name) => {
+						const [matricula, ...rest] = name.split(" ")
 						newData.push({
 							grupo: grupo,
 							fecha: fecha,
-							nombre: name,
+							matricula : matricula,
+							nombre: rest.join(" "),
 						});
 					});
 				}
 			}
 
 			let csv = fields.join(",") + "\n";
-			newData.forEach((row: any) => {
-				csv += `${row.grupo},${row.fecha},${row.nombre}\n`;
+			newData.forEach((row) => {
+				csv += `${row.grupo},${row.fecha},${row.matricula},${row.nombre}\n`;
 			});
 
 			const permissions =
