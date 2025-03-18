@@ -34,9 +34,9 @@
         "expo-asset",
         {
           "assets": [
-            "./assets/images/Avatar.png",
-            "./assets/images/FingerPrint.png",
-            "./assets/images/FingerPrintLogin.png"
+            "./assets/images/avatar.png",
+            "./assets/images/fingerprint.png",
+            "./assets/images/fingerprintlogin.png"
           ]
         }
       ],

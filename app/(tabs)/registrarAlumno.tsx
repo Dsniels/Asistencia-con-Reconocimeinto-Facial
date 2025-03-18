@@ -120,7 +120,7 @@ export default function RegistroAlumno() {
 								? {
 										uri: alumno.imagen.uri,
 								  }
-								: require("../../assets/images/Avatar.png")
+								: require("../../assets/images/avatar.png")
 						}
 						style={styles.image}
 					/>
