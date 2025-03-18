@@ -1,7 +1,7 @@
 import axios from "axios";
 
 //axios.defaults.baseURL ="https://apirecognitionrn-fyfgbdh0bch5e5ek.mexicocentral-01.azurewebsites.net"
-axios.defaults.baseURL ="https://expoapirecognition-hkhrcxe2axcnhngp.mexicocentral-01.azurewebsites.net"
+axios.defaults.baseURL ="https://facerecognition-bygthpaubbbehzcp.mexicocentral-01.azurewebsites.net"
 
 
 axios.interceptors.request.use(

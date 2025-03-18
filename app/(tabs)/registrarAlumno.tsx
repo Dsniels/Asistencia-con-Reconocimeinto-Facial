@@ -5,7 +5,6 @@ import {
 	TextInput,
 	Button,
 	Image,
-	
 	ToastAndroid,
 	SafeAreaView,
 	Pressable,
@@ -121,7 +120,7 @@ export default function RegistroAlumno() {
 								? {
 										uri: alumno.imagen.uri,
 								  }
-								: require("../../assets/images/avatar.png")
+								: require("../../assets/images/Avatar.png")
 						}
 						style={styles.image}
 					/>
