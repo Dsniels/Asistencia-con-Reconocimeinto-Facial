@@ -42,7 +42,7 @@ export class FormatData {
 				ToastAndroid.LONG,
 				ToastAndroid.CENTER
 			);
-			this.Api.registro(formData);
+			this.Api.registro(formData, usuario);
 		} else {
 			ToastAndroid.show(
 				"Todos los campos son necesarios",

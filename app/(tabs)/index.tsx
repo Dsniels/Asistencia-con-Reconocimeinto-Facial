@@ -77,7 +77,9 @@ export default function TabOneScreen() {
 				>
 					<View className="flex-1 justify-end items-center m-9 ">
 						<TouchableOpacity
-							className="flex bg-white content-center justify-center align-middle items-center rounded-full h-20 w-20 text-white"
+							className="flex bg-white content-center justify-center 
+										align-middle items-center rounded-full h-20 w-20 
+										text-white"
 							onPress={() => {
 								imageActions.takePhotoAndSend(
 									cameraRef as CameraView,
