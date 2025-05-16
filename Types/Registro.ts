@@ -17,7 +17,7 @@ export type Alumno = {
 }
 
 export interface IActions {
-    registro( imagen: FormData, user: Alumno) : Promise<void>;
+    registro( data: FormData, image : FormData, usuario:Alumno) : Promise<void>;
     reconocimiento(imagen:FormData):Promise<void>;
     editarUsuario(data :FormData):Promise<void>;
     deleteUser(nombre:FormData):Promise<void>;

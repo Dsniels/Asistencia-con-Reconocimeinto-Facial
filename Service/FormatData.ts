@@ -37,12 +37,13 @@ export class FormatData {
 				usuario.imagen as CameraCapturedPicture
 			);
 			formData.append("nombre", nombre);
+      const image = this.prepareData(usuario.imagen as CameraCapturedPicture)
 			ToastAndroid.showWithGravity(
 				"Registrando alumno, te avisaremos cuando este listo!",
 				ToastAndroid.LONG,
 				ToastAndroid.CENTER
 			);
-			this.Api.registro(formData, usuario);
+			this.Api.registro(formData, image, usuario);
 		} else {
 			ToastAndroid.show(
 				"Todos los campos son necesarios",

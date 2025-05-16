@@ -212,7 +212,6 @@ export default function TabTwoScreen() {
                 onPress={async () => {
                   try {
                     await AsyncStorage.clear();
-
                     setIsModalVisible(false);
                   } catch (error) {
                     console.error("Failed to clear AsyncStorage:", error);

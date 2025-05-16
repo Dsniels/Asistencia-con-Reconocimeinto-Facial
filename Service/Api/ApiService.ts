@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import HttpClient from "./HttpClient";
-import { Alumno, IActions } from "@/Types/Registro";
+import {  Alumno, IActions } from "@/Types/Registro";
 import { ToastAndroid } from "react-native";
 import { StorageService, saveData } from "../StorageService";
 import * as Haptics from "expo-haptics";
@@ -15,44 +15,50 @@ export class ApiService implements IActions {
     this.Store = saveData;
   }
 
-  registro(body: FormData, user: Alumno): Promise<void> {
+  registro(body: FormData, image: FormData, user:Alumno): Promise<void> {
     return new Promise((resolve, reject) => {
       HttpClient.post("register", body)
-        .then(async(response: AxiosResponse<ResponseApi>) => {
+        .then(async (response: AxiosResponse<ResponseApi>) => {
           if (response.data.status === "fail") {
             throw new Error("No se pudo detectar un rostro");
           }
+         await this.reconocimiento(image);
           this.Store.saveRecord(user);
-          const currentDate = new Date().toISOString().split("T")[0];
-
-          if( !user.grupo || !user.matricula || !user.nombre) {
-            return
-          }
-
-          if (!this.detectedNamesMap[user.grupo]) {
-              this.detectedNamesMap[user.grupo] = {};
-          }
-          if (!this.detectedNamesMap[user.grupo][currentDate]) {
-              this.detectedNamesMap[user.grupo][currentDate] = new Set();
-          }
-
-          this.detectedNamesMap[user.grupo][currentDate].add(`${user.matricula} ${user.nombre.toUpperCase()} ${user.primerApellido.toUpperCase()} ${user.segundoApellido.toUpperCase()}`);
-
-          const detectedNamesMapToSave = Object.fromEntries(
-              Object.entries(this.detectedNamesMap).map(([group, datesMap]) => [
-                  group,
-                  Object.fromEntries(
-                      Object.entries(datesMap).map(([date, namesSet]) => [date, Array.from(namesSet)])
-                  ),
-              ])
-          );
-
-          await this.Store.saveDetectedNames(detectedNamesMapToSave);
-
+          //const currentDate = new Date().toISOString().split("T")[0];
+          //
+          //if (!user.grupo || !user.matricula || !user.nombre) {
+          //  return;
+          //}
+          //
+          //if (!this.detectedNamesMap[user.grupo]) {
+          //  this.detectedNamesMap[user.grupo] = {};
+          //}
+          //if (!this.detectedNamesMap[user.grupo][currentDate]) {
+          //  this.detectedNamesMap[user.grupo][currentDate] = new Set();
+          //}
+          //
+          //this.detectedNamesMap[user.grupo][currentDate].add(
+          //  `${user.matricula} ${user.nombre.toUpperCase()} ${user.primerApellido.toUpperCase()} ${user.segundoApellido.toUpperCase()}`.trim(),
+          //);
+          //
+          //const detectedNamesMapToSave = Object.fromEntries(
+          //  Object.entries(this.detectedNamesMap).map(([group, datesMap]) => [
+          //    group,
+          //    Object.fromEntries(
+          //      Object.entries(datesMap).map(([date, namesSet]) => [
+          //        date,
+          //        Array.from(namesSet),
+          //      ]),
+          //    ),
+          //  ]),
+          //);
+          //
+          //await this.Store.saveDetectedNames(detectedNamesMapToSave);
+          //
           ToastAndroid.showWithGravity(
-              "Alumno Registrado y Guardado",
-              ToastAndroid.LONG,
-              ToastAndroid.CENTER
+            "Alumno Registrado y Guardado",
+            ToastAndroid.LONG,
+            ToastAndroid.CENTER,
           );
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           resolve();
